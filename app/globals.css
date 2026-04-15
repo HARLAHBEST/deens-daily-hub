@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-syne);
+  
+  --color-navy: #0f1f35;
+  --color-navy-light: #1a3a5c;
+  --color-gold: #f0a500;
+  --color-gold-light: #ffc940;
+}
+
+:root {
+  --background: #f7f9fc;
+  --foreground: #1a2332;
+  --card: #ffffff;
+  --card-foreground: #1a2332;
+  --primary: #f0a500;
+  --primary-foreground: #0f1f35;
+  --secondary: #0f1f35;
+  --secondary-foreground: #ffffff;
+  --border: #e4eaf2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #060d18;
+    --foreground: #f7f9fc;
+    --card: #0f1f35;
+    --card-foreground: #f7f9fc;
+    --border: #1a3a5c;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-slate-800/20;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-gold)] to-[var(--color-gold-light)];
+  }
+
+  .bg-gradient-premium {
+    @apply bg-gradient-to-br from-[var(--color-navy)] via-[var(--color-navy-light)] to-[var(--color-navy)];
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* Custom Animations */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
