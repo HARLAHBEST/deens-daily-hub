@@ -17,33 +17,19 @@ export default function PublicLayout({
         {children}
       </main>
       
-      {/* Premium Footer */}
-      <footer className="py-20 bg-[#060d18] border-t border-white/5">
-        <div className="container mx-auto px-6 text-center space-y-12">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 bg-navy-light rounded-2xl flex items-center justify-center text-gold text-2xl font-black font-display shadow-2xl">D</div>
-            <div className="space-y-1">
-              <span className="font-black text-white text-2xl font-display uppercase tracking-tight block">Deen's Daily Hub</span>
-              <span className="text-[10px] text-gold font-black uppercase tracking-[3px]">Regina's Premium Liquidators</span>
-            </div>
+      {/* Compact Global Footer */}
+      <footer className="py-12 bg-[#060d18] border-t border-white/5">
+        <div className="container mx-auto px-6 text-center space-y-6">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-10 h-10 bg-navy-light rounded-xl flex items-center justify-center text-gold text-xl font-black font-display">D</div>
+            <span className="text-[10px] text-white/40 font-black uppercase tracking-[2px]">Deen's Hub &bull; Regina, SK</span>
           </div>
           
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-            <Link href="/" className="text-[11px] font-black text-white/30 hover:text-gold uppercase tracking-[2px] transition-colors">Home</Link>
-            <Link href="/#categories" className="text-[11px] font-black text-white/30 hover:text-gold uppercase tracking-[2px] transition-colors">Categories</Link>
-            <Link href="/#items" className="text-[11px] font-black text-white/30 hover:text-gold uppercase tracking-[2px] transition-colors">Inventory</Link>
-            <Link href="/#how" className="text-[11px] font-black text-white/30 hover:text-gold uppercase tracking-[2px] transition-colors">How it works</Link>
-          </div>
-          
-          <div className="pt-12 border-t border-white/5 space-y-4">
-            <p className="text-[10px] text-white/10 font-bold uppercase tracking-[2px]">
-              &copy; {new Date().getFullYear()} Deen's Daily Hub &bull; Regina, SK &bull; All Rights Reserved
-            </p>
-            <div className="flex items-center justify-center gap-4 opacity-20">
-              <div className="w-1 h-1 rounded-full bg-white"></div>
-              <div className="w-1 h-1 rounded-full bg-white"></div>
-              <div className="w-1 h-1 rounded-full bg-white"></div>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-6 text-[9px] font-black text-white/20 uppercase tracking-[2px]">
+            <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+            <Link href="/#categories" className="hover:text-gold transition-colors">Dept</Link>
+            <Link href="/#items" className="hover:text-gold transition-colors">Stock</Link>
+            <p className="border-t border-white/5 pt-4 w-full">&copy; {new Date().getFullYear()} All Rights Reserved</p>
           </div>
         </div>
       </footer>

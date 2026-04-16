@@ -32,23 +32,23 @@ const PublicNav = () => {
       <header 
         className={`sticky top-0 z-[100] transition-all duration-300 ${
           isScrolled 
-            ? 'bg-white/95 dark:bg-[#060d18]/95 backdrop-blur-md border-b border-white/10 shadow-lg py-3' 
-            : 'bg-white dark:bg-[#060d18] border-b border-white/5 py-4'
+            ? 'bg-white/95 dark:bg-[#060d18]/95 backdrop-blur-md border-b border-white/10 shadow-lg py-2' 
+            : 'bg-white dark:bg-[#060d18] border-b border-white/5 py-3'
         }`}
       >
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between gap-4">
-            {/* Logo */}
+            {/* Logo - Compact */}
             <Link href="/" className="flex items-center gap-2 group shrink-0">
-              <div className="w-9 h-9 bg-navy dark:bg-navy-light rounded-lg flex items-center justify-center text-gold text-lg font-black font-display shadow-lg group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 bg-navy dark:bg-navy-light rounded-lg flex items-center justify-center text-gold text-base font-black font-display shadow-lg">
                 D
               </div>
               <div className="flex flex-col">
-                <span className="font-black text-sm tracking-tight text-navy dark:text-white leading-none font-display uppercase">
-                  Deen's Daily Hub
+                <span className="font-black text-xs tracking-tight text-navy dark:text-white leading-none font-display uppercase">
+                  Deen's Hub
                 </span>
-                <span className="text-[10px] font-bold text-slate-400 dark:text-white/40 tracking-wider">
-                  Regina, SK
+                <span className="text-[9px] font-bold text-slate-400 dark:text-white/40 tracking-tight">
+                  Regina
                 </span>
               </div>
             </Link>
