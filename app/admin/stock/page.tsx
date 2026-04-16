@@ -175,7 +175,7 @@ export default function StockTracker() {
           return (
             <div 
               key={it.uid}
-              className={`bg-white dark:bg-[#0f1f35] border border-slate-200 dark:border-white/5 rounded-3xl p-5 transition-all hover:shadow-xl hover:shadow-navy/5 dark:hover:shadow-none group ${
+              className={`bg-white dark:bg-[#0f1f35] border border-slate-200 dark:border-white/5 rounded-[24px] md:rounded-3xl p-4 md:p-6 transition-all hover:shadow-xl hover:shadow-navy/5 dark:hover:shadow-none group ${
                 isGone ? 'opacity-60 grayscale-[0.5]' : ''
               }`}
             >
@@ -223,11 +223,11 @@ export default function StockTracker() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                   {stKey === 'In Stock' ? (
-                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-white/5 p-2 rounded-2xl border border-slate-100 dark:border-white/10">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 bg-slate-50 dark:bg-white/5 p-2 rounded-2xl border border-slate-100 dark:border-white/10 w-full sm:w-auto">
                       <select 
-                        className="bg-transparent border-none text-[11px] font-black uppercase tracking-wider focus:ring-0 w-36 cursor-pointer dark:text-white"
+                        className="bg-transparent border-none text-[11px] font-black uppercase tracking-wider focus:ring-0 flex-1 sm:w-36 cursor-pointer dark:text-white min-w-[120px]"
                         value={pendingActions[it.uid]?.st || ''}
                         onChange={(e) => handleActionChange(it.uid, e.target.value)}
                       >
@@ -239,7 +239,7 @@ export default function StockTracker() {
                       </select>
                       
                       {pendingActions[it.uid]?.st === 'Past Sold' && (
-                        <div className="relative w-24">
+                        <div className="relative w-full sm:w-24">
                           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                           <input 
                             type="number"
@@ -250,11 +250,11 @@ export default function StockTracker() {
                           />
                         </div>
                       )}
-
+ 
                       <button 
                         onClick={() => saveAction(it.uid)}
                         disabled={!pendingActions[it.uid]?.st}
-                        className="p-2.5 bg-gold text-navy rounded-xl hover:bg-gold-light disabled:opacity-30 transition-all font-black shadow-lg shadow-gold/10"
+                        className="p-2.5 bg-gold text-navy rounded-xl hover:bg-gold-light disabled:opacity-30 transition-all font-black shadow-lg shadow-gold/10 ml-auto sm:ml-0"
                       >
                         <Save size={16} />
                       </button>

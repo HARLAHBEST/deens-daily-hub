@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -14,7 +14,9 @@ import {
   LogOut,
   ShoppingBag,
   TrendingUp,
-  CreditCard
+  CreditCard,
+  Menu,
+  X
 } from 'lucide-react';
 
 interface SidebarItemProps {
@@ -23,11 +25,13 @@ interface SidebarItemProps {
   label: string;
   collapsed: boolean;
   active: boolean;
+  onClick?: () => void;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ href, icon, label, collapsed, active }) => (
+const SidebarItem: React.FC<SidebarItemProps> = ({ href, icon, label, collapsed, active, onClick }) => (
   <Link 
     href={href}
+    onClick={onClick}
     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
       active 
         ? 'bg-gold text-navy shadow-lg shadow-gold/20' 
@@ -37,17 +41,26 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ href, icon, label, collapsed,
     <div className={`transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
       {icon}
     </div>
-    {!collapsed && (
-      <span className="font-bold whitespace-nowrap overflow-hidden text-[10px] uppercase tracking-wider">
-        {label}
-      </span>
-    )}
+    <span className={`font-bold whitespace-nowrap overflow-hidden text-[10px] uppercase tracking-wider transition-all duration-300 ${
+      collapsed ? 'md:w-0 md:opacity-0' : 'w-auto opacity-100'
+    }`}>
+      {label}
+    </span>
   </Link>
 );
 
-const AdminSidebar = () => {
+interface AdminSidebarProps {
+  collapsed: boolean;
+  setCollapsed: (val: boolean) => void;
+}
+
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed, setCollapsed }) => {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   const menuItems = [
     { href: '/admin', icon: <LayoutDashboard size={20} />, label: 'Overview' },
@@ -56,64 +69,89 @@ const AdminSidebar = () => {
     { href: '/admin/expenses', icon: <CreditCard size={20} />, label: 'Expenses' },
     { href: '/admin/analytics', icon: <TrendingUp size={20} />, label: 'Analytics' },
     { href: '/admin/referrals', icon: <Users size={20} />, label: 'Referrals' },
-    { href: '/admin/data', icon: <Database size={20} />, label: 'Data & Backup' },
+    { href: '/admin/data', icon: <Database size={20} />, label: 'Data Hub' },
   ];
 
   return (
-    <aside 
-      className={`fixed top-0 left-0 h-screen bg-navy dark:bg-[#060d18] border-r border-white/5 transition-all duration-300 z-50 flex flex-col ${
-        collapsed ? 'w-20' : 'w-64'
-      }`}
-    >
-      {/* Header */}
-      <div className="p-6 flex items-center justify-between">
-        {!collapsed && (
-          <div className="flex items-center gap-2">
+    <>
+      {/* Mobile Toggle Button */}
+      <button 
+        onClick={() => setMobileOpen(!mobileOpen)}
+        className="fixed top-4 left-4 z-[60] md:hidden p-3 bg-navy text-gold rounded-2xl shadow-2xl border border-white/10 active:scale-95 transition-all"
+      >
+        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div 
+          className="fixed inset-0 bg-navy/60 backdrop-blur-sm z-40 md:hidden animate-in fade-in duration-300"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      <aside 
+        className={`fixed top-0 left-0 h-screen bg-navy dark:bg-[#060d18] border-r border-white/5 transition-all duration-300 z-50 flex flex-col ${
+          mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'
+        } ${
+          collapsed ? 'md:w-20' : 'md:w-64'
+        }`}
+      >
+        {/* Header */}
+        <div className="p-6 flex items-center justify-between">
+          <div className={`flex items-center gap-2 transition-all duration-300 ${collapsed ? 'md:opacity-0 md:scale-50' : 'opacity-100 scale-100'}`}>
             <div className="w-8 h-8 bg-gold rounded-lg flex items-center justify-center text-navy font-black font-display">
               D
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-sm text-white font-display tracking-tight">Deen's Hub</span>
-              <span className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Admin Panel</span>
+              <span className="font-bold text-sm text-white font-display tracking-tight leading-none">Deen's Hub</span>
+              <span className="text-[9px] text-white/40 uppercase tracking-widest font-bold mt-1">Admin Panel</span>
             </div>
           </div>
-        )}
-        {collapsed && (
-          <div className="w-8 h-8 bg-gold rounded-lg flex items-center justify-center text-navy font-black font-display mx-auto">
-            D
-          </div>
-        )}
-        <button 
-          onClick={() => setCollapsed(!collapsed)}
-          className={`absolute -right-3 top-7 w-6 h-6 bg-navy dark:bg-slate-800 border border-white/10 rounded-full flex items-center justify-center text-white/40 hover:text-gold shadow-sm transition-all hidden md:flex`}
-        >
-          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-        </button>
-      </div>
+          
+          {collapsed && (
+            <div className="hidden md:flex absolute inset-x-0 top-6 justify-center">
+               <div className="w-8 h-8 bg-gold rounded-lg flex items-center justify-center text-navy font-black font-display">D</div>
+            </div>
+          )}
 
-      {/* Menu Items */}
-      <nav className="flex-1 px-4 space-y-2 mt-4">
-        {menuItems.map((item) => (
-          <SidebarItem 
-            key={item.href}
-            {...item}
-            collapsed={collapsed}
-            active={pathname === item.href}
-          />
-        ))}
-      </nav>
+          <button 
+            onClick={() => setCollapsed(!collapsed)}
+            className={`absolute -right-3 top-7 w-6 h-6 bg-navy dark:bg-slate-800 border border-white/10 rounded-full flex items-center justify-center text-white/40 hover:text-gold shadow-sm transition-all hidden md:flex`}
+          >
+            {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          </button>
+        </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-white/5">
-        <Link 
-          href="/"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:bg-white/5 hover:text-rose-500 transition-all group`}
-        >
-          <LogOut size={20} className="group-hover:scale-110 transition-transform" />
-          {!collapsed && <span className="font-bold text-[10px] uppercase tracking-wider">Exit Admin</span>}
-        </Link>
-      </div>
-    </aside>
+        {/* Menu Items */}
+        <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto no-scrollbar">
+          {menuItems.map((item) => (
+            <SidebarItem 
+              key={item.href}
+              {...item}
+              collapsed={collapsed}
+              active={pathname === item.href}
+              onClick={() => setMobileOpen(false)}
+            />
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-white/5">
+          <Link 
+            href="/"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:bg-white/5 hover:text-rose-500 transition-all group`}
+          >
+            <LogOut size={20} className="group-hover:scale-110 transition-transform" />
+            <span className={`font-bold text-[10px] uppercase tracking-wider transition-all duration-300 ${
+              collapsed ? 'md:w-0 md:opacity-0' : 'w-auto opacity-100'
+            }`}>
+              Exit Admin
+            </span>
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 };
 

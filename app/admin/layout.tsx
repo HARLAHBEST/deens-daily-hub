@@ -13,6 +13,7 @@ export default function AdminLayout({
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('admin_authenticated');
@@ -101,9 +102,11 @@ export default function AdminLayout({
 
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-[#060d18]">
-      <AdminSidebar />
-      <main className="flex-1 transition-all duration-300 ml-20 md:ml-64 p-4 md:p-8">
-        <div className="max-w-7xl mx-auto pt-4 md:pt-0">
+      <AdminSidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+      <main className={`flex-1 transition-all duration-300 p-4 md:p-8 ${
+        collapsed ? 'md:ml-20' : 'md:ml-64'
+      } ml-0 pt-20 md:pt-8`}>
+        <div className="max-w-7xl mx-auto">
           {children}
         </div>
       </main>

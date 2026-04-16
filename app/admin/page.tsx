@@ -107,7 +107,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatsCard 
           label="Gross Revenue" 
           value={formatCurrency(data.revenue)} 
@@ -139,13 +139,13 @@ export default function AdminDashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white dark:bg-[#0f1f35] rounded-[40px] border border-slate-200 dark:border-white/5 p-10 shadow-sm relative overflow-hidden group">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="lg:col-span-2 bg-white dark:bg-[#0f1f35] rounded-[32px] md:rounded-[40px] border border-slate-200 dark:border-white/5 p-6 md:p-10 shadow-sm relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-gold/10 transition-all"></div>
           
-          <div className="flex justify-between items-start mb-10 relative z-10">
+          <div className="flex justify-between items-start mb-8 md:mb-10 relative z-10">
             <div>
-              <h2 className="text-2xl font-black dark:text-white font-display uppercase tracking-tight">Inventory Logistics</h2>
+              <h2 className="text-xl md:text-2xl font-black dark:text-white font-display uppercase tracking-tight">Inventory Logistics</h2>
               <p className="text-[10px] font-black text-slate-400 dark:text-white/20 uppercase tracking-widest mt-1">Real-time distribution analytics</p>
             </div>
             <Link href="/admin/stock" className="p-3 bg-navy dark:bg-white/5 rounded-2xl text-gold hover:bg-gold hover:text-navy transition-all shadow-lg active:scale-95">
@@ -153,28 +153,28 @@ export default function AdminDashboard() {
             </Link>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 relative z-10">
-            <div className="p-6 rounded-[32px] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 group/stat hover:border-gold/50 transition-all">
-              <div className="text-3xl font-black text-navy dark:text-white font-display mb-1">{data.stockCount}</div>
-              <div className="text-[10px] text-slate-400 dark:text-white/30 uppercase tracking-[2px] font-black">Active Units</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6 relative z-10">
+            <div className="p-4 md:p-6 rounded-[24px] md:rounded-[32px] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 group/stat hover:border-gold/50 transition-all text-center sm:text-left">
+              <div className="text-2xl md:text-3xl font-black text-navy dark:text-white font-display mb-1">{data.stockCount}</div>
+              <div className="text-[9px] md:text-[10px] text-slate-400 dark:text-white/30 uppercase tracking-[2px] font-black">Active Units</div>
             </div>
-            <div className="p-6 rounded-[32px] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 group/stat hover:border-gold/50 transition-all">
-              <div className="text-3xl font-black text-navy dark:text-white font-display mb-1">{data.totalSold}</div>
-              <div className="text-[10px] text-slate-400 dark:text-white/30 uppercase tracking-[2px] font-black">Closed Sales</div>
+            <div className="p-4 md:p-6 rounded-[24px] md:rounded-[32px] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 group/stat hover:border-gold/50 transition-all text-center sm:text-left">
+              <div className="text-2xl md:text-3xl font-black text-navy dark:text-white font-display mb-1">{data.totalSold}</div>
+              <div className="text-[9px] md:text-[10px] text-slate-400 dark:text-white/30 uppercase tracking-[2px] font-black">Closed Sales</div>
             </div>
-            <div className="p-6 rounded-[32px] bg-gold/10 border border-gold/20 group/stat">
-              <div className="text-3xl font-black text-gold font-display mb-1">
+            <div className="p-4 md:p-6 rounded-[24px] md:rounded-[32px] bg-gold/10 border border-gold/20 group/stat text-center sm:text-left">
+              <div className="text-2xl md:text-3xl font-black text-gold font-display mb-1">
                 {((data.totalSold / (data.stockCount + data.totalSold || 1)) * 100).toFixed(0)}%
               </div>
-              <div className="text-[10px] text-gold uppercase tracking-[2px] font-black">Sell-Through</div>
+              <div className="text-[9px] md:text-[10px] text-gold uppercase tracking-[2px] font-black">Sell-Through</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#0f1f35] rounded-[40px] border border-slate-200 dark:border-white/5 p-10 shadow-sm relative overflow-hidden group">
+        <div className="bg-white dark:bg-[#0f1f35] rounded-[32px] md:rounded-[40px] border border-slate-200 dark:border-white/5 p-6 md:p-10 shadow-sm relative overflow-hidden group">
           <div className="flex justify-between items-start mb-8 relative z-10">
             <div>
-              <h2 className="text-2xl font-black dark:text-white font-display uppercase tracking-tight">Promoters</h2>
+              <h2 className="text-xl md:text-2xl font-black dark:text-white font-display uppercase tracking-tight">Promoters</h2>
               <p className="text-[10px] font-black text-slate-400 dark:text-white/20 uppercase tracking-widest mt-1">Loyalty Hub Overview</p>
             </div>
             <Link href="/admin/referrals" className="p-3 bg-navy dark:bg-white/5 rounded-2xl text-gold hover:bg-gold hover:text-navy transition-all shadow-lg active:scale-95">
@@ -199,18 +199,18 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-navy rounded-[40px] p-10 text-white relative overflow-hidden group shadow-2xl flex items-center justify-between">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+        <div className="bg-navy rounded-[32px] md:rounded-[40px] p-8 md:p-10 text-white relative overflow-hidden group shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="relative z-10 max-w-sm">
             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6 text-gold group-hover:rotate-12 transition-transform">
                <RotateCcw size={24} />
             </div>
-            <h2 className="text-2xl font-black font-display mb-3 uppercase tracking-tight">System Reliability</h2>
+            <h2 className="text-xl md:text-2xl font-black font-display mb-3 uppercase tracking-tight">System Reliability</h2>
             <p className="text-white/40 text-[11px] font-bold leading-relaxed">
               Maintain operational integrity by performing off-site encrypted data backups regularly.
             </p>
           </div>
-          <Link href="/admin/data" className="relative z-10 px-8 py-5 bg-gold text-navy rounded-2xl font-black text-xs uppercase tracking-[2px] shadow-xl shadow-gold/10 hover:bg-white transition-all active:scale-95">
+          <Link href="/admin/data" className="relative z-10 px-6 md:px-8 py-4 md:py-5 bg-gold text-navy rounded-2xl font-black text-xs uppercase tracking-[2px] shadow-xl shadow-gold/10 hover:bg-white transition-all active:scale-95 w-full sm:w-auto text-center">
             Backup System
           </Link>
           <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-white/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
