@@ -113,58 +113,57 @@ export default function StockTracker() {
     new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(val);
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-display uppercase italic text-gradient leading-none">
             Stock Tracker
           </h1>
-          <p className="text-slate-500 dark:text-slate-400">
-            Manage your inventory, update statuses, and track sales.
+          <p className="text-slate-500 dark:text-white/30 text-[11px] font-bold uppercase tracking-widest mt-1">
+            Operational Inventory Management
           </p>
         </div>
       </div>
 
-      {/* Filters Bar */}
-      <div className="bg-white dark:bg-[#0f1f35] p-4 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm flex flex-wrap gap-4 items-center">
+      {/* Filters Bar - Compact */}
+      <div className="bg-white dark:bg-[#0f1f35] p-3 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[240px] group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-gold transition-colors" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-gold transition-colors" size={16} />
           <input 
             type="text"
-            placeholder="Search by lot, description or invoice..."
-            className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-white/5 border-none rounded-2xl text-sm focus:ring-2 focus:ring-gold/20 focus:border-gold dark:text-white transition-all"
+            placeholder="Search lot, description, invoice..."
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-none rounded-xl text-[13px] focus:ring-1 focus:ring-gold/30 dark:text-white transition-all outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         
         <div className="flex items-center gap-2">
-          <Filter size={16} className="text-slate-400" />
           <select 
-            className="bg-slate-50 dark:bg-white/5 border-none rounded-2xl text-sm py-3 px-4 focus:ring-2 focus:ring-gold/20 focus:border-gold dark:text-white cursor-pointer"
+            className="bg-slate-50 dark:bg-white/5 border-none rounded-xl text-[11px] font-black uppercase py-2.5 px-3 focus:ring-1 focus:ring-gold/30 dark:text-white cursor-pointer transition-all"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
-            <option value="All">All Categories</option>
+            <option value="All">Categories</option>
             {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           
           <select 
-            className="bg-slate-50 dark:bg-white/5 border-none rounded-2xl text-sm py-3 px-4 focus:ring-2 focus:ring-gold/20 focus:border-gold dark:text-white cursor-pointer"
+            className="bg-slate-50 dark:bg-white/5 border-none rounded-xl text-[11px] font-black uppercase py-2.5 px-3 focus:ring-1 focus:ring-gold/30 dark:text-white cursor-pointer transition-all"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="All">All Statuses</option>
+            <option value="All">Statuses</option>
             {Object.keys(STATUS_CONFIG).map(s => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
       </div>
 
       {/* Items List */}
-      <div className="space-y-4">
-        <div className="text-[10px] font-black text-slate-400 dark:text-white/30 uppercase tracking-[3px] px-2 flex items-center justify-between">
-          <span>{filteredItems.length} items found</span>
-          <span>Showing 1-50</span>
+      <div className="space-y-2.5">
+        <div className="text-[9px] font-black text-slate-400 dark:text-white/30 uppercase tracking-[2px] px-1 flex items-center justify-between">
+          <span>{filteredItems.length} entries found</span>
+          <span>Showing Top 50</span>
         </div>
         
         {filteredItems.slice(0, 50).map((it) => {
@@ -175,63 +174,57 @@ export default function StockTracker() {
           return (
             <div 
               key={it.uid}
-              className={`bg-white dark:bg-[#0f1f35] border border-slate-200 dark:border-white/5 rounded-[24px] md:rounded-3xl p-4 md:p-6 transition-all hover:shadow-xl hover:shadow-navy/5 dark:hover:shadow-none group ${
-                isGone ? 'opacity-60 grayscale-[0.5]' : ''
+              className={`bg-white dark:bg-[#0f1f35] border border-slate-200 dark:border-white/5 rounded-2xl md:rounded-3xl p-3 md:p-4 transition-all hover:border-gold/30 group ${
+                isGone ? 'opacity-40 grayscale-[0.5]' : ''
               }`}
             >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div className="flex-1 min-w-0 space-y-3">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="font-display text-[9px] font-black text-navy bg-gold px-2 py-0.5 rounded-md uppercase tracking-wider">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="flex-1 min-w-0 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-display text-[8px] font-black text-navy bg-gold px-1.5 py-0.5 rounded-sm uppercase tracking-[1.5px]">
                       LOT {it.lot}
                     </span>
-                    <span className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[1.5px] px-2.5 py-1 rounded-full ${
+                    <span className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-[1.5px] px-2 py-0.5 rounded-full ${
                       stKey === 'In Stock' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400' :
-                      stKey.includes('Sold') ? 'bg-gold/10 text-gold-light dark:bg-gold/10 dark:text-gold' :
+                      stKey.includes('Sold') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400' :
                       'bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-white/40'
                     }`}>
                       {config.icon} {config.label}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{it.cat}</span>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{it.cat}</span>
                   </div>
                   
-                  <h3 className="font-black text-navy dark:text-white font-display text-lg tracking-tight truncate group-hover:text-gold transition-colors" title={it.desc}>
+                  <h3 className="font-black text-navy dark:text-white font-display text-base tracking-tight truncate group-hover:text-gold transition-colors">
                     {it.desc}
                   </h3>
                   
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-white/40 font-bold">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 dark:text-white/40 font-bold">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] uppercase opacity-50">Invoice</span>
+                      <span className="text-[9px] uppercase opacity-40">Invoice</span>
                       <span className="font-mono text-navy dark:text-white">{it.inv}</span>
                     </div>
-                    <span className="opacity-20">|</span>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] uppercase opacity-50">Added</span>
-                      <span className="text-navy dark:text-white">{it.date}</span>
-                    </div>
-                    <span className="opacity-20">|</span>
-                    <div className="flex items-center gap-2">
-                       <span className="text-[10px] uppercase opacity-50">Cost</span>
-                       <span className="text-lg text-navy dark:text-gold font-display font-black">{formatCurrency(it.cost)}</span>
+                      <span className="text-[9px] uppercase opacity-40">Cost</span>
+                      <span className="text-base text-navy dark:text-gold font-display font-black leading-none">{formatCurrency(it.cost)}</span>
                     </div>
                   </div>
 
                   {stKey === 'Past Sold' && statuses[it.uid]?.price && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-gold/10 rounded-lg text-gold font-black text-xs uppercase tracking-wider">
-                      <TrendingDown size={14} /> Sale Price: {formatCurrency(statuses[it.uid]!.price!)}
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-gold/5 border border-gold/10 rounded-md text-gold font-black text-[9px] uppercase tracking-wider">
+                      <TrendingDown size={12} /> SP: {formatCurrency(statuses[it.uid]!.price!)}
                     </div>
                   )}
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                   {stKey === 'In Stock' ? (
-                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 bg-slate-50 dark:bg-white/5 p-2 rounded-2xl border border-slate-100 dark:border-white/10 w-full sm:w-auto">
+                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-white/5 p-1.5 rounded-xl border border-slate-100 dark:border-white/5">
                       <select 
-                        className="bg-transparent border-none text-[11px] font-black uppercase tracking-wider focus:ring-0 flex-1 sm:w-36 cursor-pointer dark:text-white min-w-[120px]"
+                        className="bg-transparent border-none text-[10px] font-black uppercase tracking-wider focus:ring-0 w-28 cursor-pointer dark:text-white outline-none"
                         value={pendingActions[it.uid]?.st || ''}
                         onChange={(e) => handleActionChange(it.uid, e.target.value)}
                       >
-                        <option value="">Mark status</option>
+                        <option value="">Status</option>
                         <option value="Past Sold">Past Sold</option>
                         <option value="Lost">Lost</option>
                         <option value="Damaged">Damaged</option>
@@ -239,12 +232,11 @@ export default function StockTracker() {
                       </select>
                       
                       {pendingActions[it.uid]?.st === 'Past Sold' && (
-                        <div className="relative w-full sm:w-24">
-                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                        <div className="relative w-20">
                           <input 
                             type="number"
-                            placeholder="Price"
-                            className="bg-white dark:bg-[#0f1f35] border border-slate-200 dark:border-white/10 rounded-xl text-xs w-full pl-5 px-2 py-1.5 font-bold focus:ring-2 focus:ring-gold/20 focus:border-gold dark:text-white outline-none"
+                            placeholder="$ Price"
+                            className="bg-white dark:bg-[#0f1f35] border border-slate-200 dark:border-white/10 rounded-lg text-[10px] w-full px-2 py-1 font-bold focus:ring-1 focus:ring-gold/30 dark:text-white outline-none"
                             value={pendingActions[it.uid]?.price || ''}
                             onChange={(e) => handlePriceChange(it.uid, e.target.value)}
                           />
@@ -254,17 +246,17 @@ export default function StockTracker() {
                       <button 
                         onClick={() => saveAction(it.uid)}
                         disabled={!pendingActions[it.uid]?.st}
-                        className="p-2.5 bg-gold text-navy rounded-xl hover:bg-gold-light disabled:opacity-30 transition-all font-black shadow-lg shadow-gold/10 ml-auto sm:ml-0"
+                        className="p-2 bg-navy dark:bg-gold text-gold dark:text-navy rounded-lg hover:scale-105 disabled:opacity-30 transition-all font-black"
                       >
-                        <Save size={16} />
+                        <Save size={14} />
                       </button>
                     </div>
                   ) : stKey !== 'Sold' && (
                     <button 
                       onClick={() => restoreItem(it.uid)}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white/60 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-gold hover:text-navy transition-all border border-transparent shadow-sm"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/40 rounded-xl text-[9px] font-black uppercase tracking-widest hover:text-gold transition-all"
                     >
-                      <RotateCcw size={16} /> Restore to Stock
+                      <RotateCcw size={14} /> Restore
                     </button>
                   )}
                 </div>
@@ -274,8 +266,8 @@ export default function StockTracker() {
         })}
 
         {filteredItems.length > 50 && (
-          <div className="text-center py-8">
-            <p className="text-slate-500 text-sm">Showing first 50 items. Use filters to narrow down.</p>
+          <div className="text-center py-6">
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Showing top 50 items. Narrow filters for more results.</p>
           </div>
         )}
       </div>

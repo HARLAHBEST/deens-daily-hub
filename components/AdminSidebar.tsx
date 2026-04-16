@@ -32,7 +32,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ href, icon, label, collapsed,
   <Link 
     href={href}
     onClick={onClick}
-    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
+    className={`flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group ${
       active 
         ? 'bg-gold text-navy shadow-lg shadow-gold/20' 
         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-navy dark:hover:text-gold'
@@ -63,13 +63,13 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed, setCollapsed }) 
   }, [pathname]);
 
   const menuItems = [
-    { href: '/admin', icon: <LayoutDashboard size={20} />, label: 'Overview' },
-    { href: '/admin/stock', icon: <Package size={20} />, label: 'Stock Tracker' },
-    { href: '/admin/sales', icon: <ShoppingBag size={20} />, label: 'Sales' },
-    { href: '/admin/expenses', icon: <CreditCard size={20} />, label: 'Expenses' },
-    { href: '/admin/analytics', icon: <TrendingUp size={20} />, label: 'Analytics' },
-    { href: '/admin/referrals', icon: <Users size={20} />, label: 'Referrals' },
-    { href: '/admin/data', icon: <Database size={20} />, label: 'Data Hub' },
+    { href: '/admin', icon: <LayoutDashboard size={18} />, label: 'Overview' },
+    { href: '/admin/stock', icon: <Package size={18} />, label: 'Stock Tracker' },
+    { href: '/admin/sales', icon: <ShoppingBag size={18} />, label: 'Sales' },
+    { href: '/admin/expenses', icon: <CreditCard size={18} />, label: 'Expenses' },
+    { href: '/admin/analytics', icon: <TrendingUp size={18} />, label: 'Analytics' },
+    { href: '/admin/referrals', icon: <Users size={18} />, label: 'Referrals' },
+    { href: '/admin/data', icon: <Database size={18} />, label: 'Data Hub' },
   ];
 
   return (
@@ -77,9 +77,9 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed, setCollapsed }) 
       {/* Mobile Toggle Button */}
       <button 
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-4 left-4 z-[60] md:hidden p-3 bg-navy text-gold rounded-2xl shadow-2xl border border-white/10 active:scale-95 transition-all"
+        className="fixed top-3 left-3 z-[60] md:hidden p-2.5 bg-navy text-gold rounded-xl shadow-2xl border border-white/10 active:scale-95 transition-all"
       >
-        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+        {mobileOpen ? <X size={18} /> : <Menu size={18} />}
       </button>
 
       {/* Mobile Overlay */}
@@ -98,33 +98,33 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed, setCollapsed }) 
         }`}
       >
         {/* Header */}
-        <div className="p-6 flex items-center justify-between">
+        <div className="p-4 md:p-5 flex items-center justify-between">
           <div className={`flex items-center gap-2 transition-all duration-300 ${collapsed ? 'md:opacity-0 md:scale-50' : 'opacity-100 scale-100'}`}>
-            <div className="w-8 h-8 bg-gold rounded-lg flex items-center justify-center text-navy font-black font-display">
+            <div className="w-7 h-7 bg-gold rounded-lg flex items-center justify-center text-navy font-black font-display">
               D
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-sm text-white font-display tracking-tight leading-none">Deen's Hub</span>
-              <span className="text-[9px] text-white/40 uppercase tracking-widest font-bold mt-1">Admin Panel</span>
+              <span className="font-bold text-xs text-white font-display tracking-tight leading-none">Deen's Hub</span>
+              <span className="text-[8px] text-white/40 uppercase tracking-widest font-bold mt-0.5">Admin Panel</span>
             </div>
           </div>
           
           {collapsed && (
-            <div className="hidden md:flex absolute inset-x-0 top-6 justify-center">
-               <div className="w-8 h-8 bg-gold rounded-lg flex items-center justify-center text-navy font-black font-display">D</div>
+            <div className="hidden md:flex absolute inset-x-0 top-5 justify-center">
+               <div className="w-7 h-7 bg-gold rounded-lg flex items-center justify-center text-navy font-black font-display">D</div>
             </div>
           )}
 
           <button 
             onClick={() => setCollapsed(!collapsed)}
-            className={`absolute -right-3 top-7 w-6 h-6 bg-navy dark:bg-slate-800 border border-white/10 rounded-full flex items-center justify-center text-white/40 hover:text-gold shadow-sm transition-all hidden md:flex`}
+            className={`absolute -right-3 top-6 w-5 h-5 bg-navy dark:bg-slate-800 border border-white/10 rounded-full flex items-center justify-center text-white/40 hover:text-gold shadow-sm transition-all hidden md:flex`}
           >
-            {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+            {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
           </button>
         </div>
 
         {/* Menu Items */}
-        <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto no-scrollbar">
+        <nav className="flex-1 px-4 space-y-1.5 mt-2 overflow-y-auto no-scrollbar">
           {menuItems.map((item) => (
             <SidebarItem 
               key={item.href}
