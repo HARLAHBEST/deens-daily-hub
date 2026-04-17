@@ -38,7 +38,19 @@ export default function LandingPage() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    setItems(getBaseItems());
+    const loadItems = async () => {
+      let dbItems = [];
+      try {
+        const res = await fetch('/api/items');
+        if (res.ok) {
+          dbItems = await res.json();
+        }
+      } catch (e) {
+        console.error('Failed to load DB items', e);
+      }
+      setItems([...getBaseItems(), ...dbItems]);
+    };
+    loadItems();
     setStatuses(getStatuses());
   }, []);
 
@@ -81,8 +93,44 @@ export default function LandingPage() {
       </div>
 
       <main className="pb-32">
+        {/* Hot Deals Section */}
+        <section id="hot" className="px-4 pt-8 pb-4">
+          <div className="flex items-center justify-between mb-4">
+             <h2 className="text-xl font-black text-rose-600 dark:text-rose-500 uppercase tracking-tight italic flex items-center gap-2">
+               <Zap size={20} className="text-rose-500" fill="currentColor" />
+               Hot Deals
+             </h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {filteredItems.slice(0, 4).map((it) => (
+              <div key={it.uid} className="bg-gradient-to-br from-rose-50 to-white dark:from-rose-950/20 dark:to-[#0f1f35] rounded-3xl border border-rose-100 dark:border-rose-900/30 overflow-hidden shadow-sm hover:shadow-xl transition-all h-full flex flex-col group relative">
+                <div className="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-xl z-10">
+                  HOT
+                </div>
+                <div className="aspect-[4/3] bg-white dark:bg-white/5 relative flex items-center justify-center overflow-hidden">
+                   {it.image ? (
+                     <img src={it.image} alt={it.desc} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                   ) : (
+                     <div className="text-5xl opacity-40 group-hover:scale-110 transition-transform duration-500">
+                       {CATEGORIES_W_ICONS.find(c => c.name === it.cat)?.icon || '📦'}
+                     </div>
+                   )}
+                </div>
+                <div className="p-4 flex flex-col flex-1">
+                  <h3 className="text-xs font-black text-navy dark:text-white uppercase tracking-tight line-clamp-2 mb-3 h-8">
+                    {it.desc}
+                  </h3>
+                  <div className="mt-auto flex items-center justify-between">
+                    <span className="text-xl font-black font-display text-rose-600">{formatCurrency(it.cost)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Browse Departments - (Image 2 Style) */}
-        <section className="px-4 pt-6 pb-8 bg-white dark:bg-[#060d18] border-b border-slate-100 dark:border-white/5">
+        <section id="categories" className="px-4 pt-6 pb-8 bg-white dark:bg-[#060d18] border-y border-slate-100 dark:border-white/5 mt-4">
           <h2 className="text-xl font-black text-navy dark:text-white mb-4 tracking-tight">Browse departments</h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
             <button 
@@ -119,7 +167,7 @@ export default function LandingPage() {
         </section>
 
         {/* Inventory Section - Compact List */}
-        <section className="px-4 py-8">
+        <section id="items" className="px-4 py-8">
           <div className="flex items-center justify-between mb-6">
              <h2 className="text-xl font-black text-navy dark:text-white uppercase tracking-tight italic">
                {activeCategory === 'All' ? 'Inventory' : activeCategory}
@@ -130,12 +178,16 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {displayedItems.map((it) => (
               <div key={it.uid} className="bg-white dark:bg-[#0f1f35] rounded-3xl border border-slate-200 dark:border-white/5 overflow-hidden shadow-sm hover:shadow-xl transition-all h-full flex flex-col group">
-                <div className="aspect-square bg-slate-50 dark:bg-white/5 relative flex items-center justify-center">
-                   <div className="text-5xl opacity-40 group-hover:scale-110 transition-transform duration-500">
-                     {CATEGORIES_W_ICONS.find(c => c.name === it.cat)?.icon || '📦'}
-                   </div>
-                   <div className="absolute top-3 left-3 flex gap-1">
-                      <span className="px-2 py-0.5 bg-emerald-500 text-white text-[8px] font-black rounded-full uppercase tracking-widest">In Stock</span>
+                <div className="aspect-square bg-slate-50 dark:bg-white/5 relative flex items-center justify-center overflow-hidden">
+                   {it.image ? (
+                     <img src={it.image} alt={it.desc} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                   ) : (
+                     <div className="text-5xl opacity-40 group-hover:scale-110 transition-transform duration-500">
+                       {CATEGORIES_W_ICONS.find(c => c.name === it.cat)?.icon || '📦'}
+                     </div>
+                   )}
+                   <div className="absolute top-3 left-3 flex gap-1 z-10">
+                      <span className="px-2 py-0.5 bg-emerald-500 text-white text-[8px] font-black rounded-full uppercase tracking-widest shadow-sm">In Stock</span>
                    </div>
                 </div>
 
@@ -166,6 +218,30 @@ export default function LandingPage() {
               <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">No matching items found</p>
             </div>
           )}
+        </section>
+
+        {/* How It Works */}
+        <section id="how" className="py-20 bg-[#0f1f35] text-white text-center border-t border-white/5 my-12">
+           <h2 className="text-2xl font-black font-display uppercase tracking-tight italic mb-12">How It Works</h2>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-6">
+             <div className="flex flex-col items-center">
+                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-6 text-gold shadow-lg border border-white/10">1</div>
+                <h3 className="font-black uppercase tracking-widest mb-3 text-sm">Find Your Deal</h3>
+                <p className="text-white/50 text-xs font-medium leading-relaxed">Browse our carefully curated inventory with transparent clearance prices.</p>
+             </div>
+             <div className="flex flex-col items-center relative">
+                <div className="hidden md:block absolute top-8 -left-12 w-24 h-[1px] bg-white/10"></div>
+                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-6 text-gold shadow-lg border border-white/10 relative z-10">2</div>
+                <h3 className="font-black uppercase tracking-widest mb-3 text-sm">Contact Us</h3>
+                <p className="text-white/50 text-xs font-medium leading-relaxed">Message us on WhatsApp to lock in your reservation instantly.</p>
+             </div>
+             <div className="flex flex-col items-center relative">
+                <div className="hidden md:block absolute top-8 -left-12 w-24 h-[1px] bg-white/10"></div>
+                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-6 text-gold shadow-lg border border-white/10 relative z-10">3</div>
+                <h3 className="font-black uppercase tracking-widest mb-3 text-sm">Local Pickup</h3>
+                <p className="text-white/50 text-xs font-medium leading-relaxed">Schedule a seamless and friendly pickup in Regina, Saskatchewan.</p>
+             </div>
+           </div>
         </section>
       </main>
 

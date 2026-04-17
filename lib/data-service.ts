@@ -26,6 +26,7 @@ export interface Item {
   bid: number;
   cost: number;
   cat: Category;
+  image?: string;
 }
 
 export interface Sale {
@@ -89,7 +90,8 @@ const KEYS = {
   STATUS: 'ddh9_status',
   EXPENSES: 'ddh9_expenses',
   EXTRA: 'ddh9_extra',
-  REFERRALS: 'ddh_referrals'
+  REFERRALS: 'ddh_referrals',
+  CUSTOM_ITEMS: 'ddh9_custom_items'
 };
 
 /**
@@ -117,7 +119,9 @@ export function getBaseItems(): Item[] {
       });
     });
   });
-  return items;
+  
+  const customItems = getCustomItems();
+  return [...customItems, ...items];
 }
 
 /**
@@ -142,6 +146,14 @@ export const storage = {
 
 export function getSales(): Sale[] {
   return storage.get(KEYS.SALES, []);
+}
+
+export function getCustomItems(): Item[] {
+  return storage.get(KEYS.CUSTOM_ITEMS, []);
+}
+
+export function saveCustomItems(items: Item[]) {
+  storage.set(KEYS.CUSTOM_ITEMS, items);
 }
 
 export function getStatuses(): StatusMap {

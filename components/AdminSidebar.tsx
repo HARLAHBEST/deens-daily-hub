@@ -61,17 +61,16 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed, setCollapsed }) 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
-
   const menuItems = [
     { href: '/admin', icon: <LayoutDashboard size={18} />, label: 'Overview' },
     { href: '/admin/stock', icon: <Package size={18} />, label: 'Stock Tracker' },
+    { href: '/admin/items', icon: <Database size={18} />, label: 'Inventory DB' },
     { href: '/admin/sales', icon: <ShoppingBag size={18} />, label: 'Sales' },
     { href: '/admin/expenses', icon: <CreditCard size={18} />, label: 'Expenses' },
     { href: '/admin/analytics', icon: <TrendingUp size={18} />, label: 'Analytics' },
     { href: '/admin/referrals', icon: <Users size={18} />, label: 'Referrals' },
     { href: '/admin/data', icon: <Database size={18} />, label: 'Data Hub' },
   ];
-
   return (
     <>
       {/* Mobile Toggle Button */}

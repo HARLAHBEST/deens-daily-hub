@@ -63,6 +63,13 @@ const PublicNav = () => {
               />
             </div>
 
+            {/* Desktop Links */}
+            <nav className="hidden lg:flex items-center gap-6 shrink-0 ml-4">
+              <Link href="/#categories" className="text-[11px] font-black uppercase text-slate-500 hover:text-gold dark:text-white/60 dark:hover:text-gold transition-colors tracking-[2px]">Categories</Link>
+              <Link href="/#items" className="text-[11px] font-black uppercase text-slate-500 hover:text-gold dark:text-white/60 dark:hover:text-gold transition-colors tracking-[2px]">Inventory</Link>
+              <Link href="/#how" className="text-[11px] font-black uppercase text-slate-500 hover:text-gold dark:text-white/60 dark:hover:text-gold transition-colors tracking-[2px]">How it Works</Link>
+            </nav>
+
             {/* Actions */}
             <div className="flex items-center gap-2 md:gap-4 shrink-0">
               <Link 
