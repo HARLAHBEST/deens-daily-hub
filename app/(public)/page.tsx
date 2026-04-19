@@ -36,6 +36,7 @@ export default function LandingPage() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [page, setPage] = useState(1);
+  const [isHotDealsVisible, setIsHotDealsVisible] = useState(true);
 
   useEffect(() => {
     const loadItems = async () => {
@@ -68,7 +69,7 @@ export default function LandingPage() {
   }, [items, statuses, search, activeCategory]);
 
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
-  const displayedItems = filteredItems.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const displayedItems = filteredItems.slice(0, page * ITEMS_PER_PAGE);
 
   const formatCurrency = (val: number) => 
     new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(val);
@@ -100,9 +101,18 @@ export default function LandingPage() {
                <Zap size={20} className="text-rose-500" fill="currentColor" />
                Hot Deals
              </h2>
+             {filteredItems.length > 0 && (
+               <button 
+                 onClick={() => setIsHotDealsVisible(!isHotDealsVisible)} 
+                 className="text-[10px] font-black bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-500 px-3 py-1 rounded-full uppercase tracking-wider transition-all active:scale-95"
+               >
+                 {isHotDealsVisible ? 'Hide' : 'Show'}
+               </button>
+             )}
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {filteredItems.slice(0, 4).map((it) => (
+          {isHotDealsVisible && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 transition-all duration-300">
+              {filteredItems.slice(0, 4).map((it) => (
               <div key={it.uid} className="bg-gradient-to-br from-rose-50 to-white dark:from-rose-950/20 dark:to-[#0f1f35] rounded-3xl border border-rose-100 dark:border-rose-900/30 overflow-hidden shadow-sm hover:shadow-xl transition-all h-full flex flex-col group relative">
                 <div className="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-xl z-10">
                   HOT
@@ -127,22 +137,23 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          )}
         </section>
 
         {/* Browse Departments - (Image 2 Style) */}
-        <section id="categories" className="px-4 pt-6 pb-8 bg-white dark:bg-[#060d18] border-y border-slate-100 dark:border-white/5 mt-4">
-          <h2 className="text-xl font-black text-navy dark:text-white mb-4 tracking-tight">Browse departments</h2>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
+        <section id="categories" className="px-4 pt-4 pb-6 bg-white dark:bg-[#060d18] border-y border-slate-100 dark:border-white/5 mt-2">
+          <h2 className="text-sm font-black text-navy dark:text-white mb-3 tracking-tight uppercase">Departments</h2>
+          <div className="grid grid-cols-4 md:grid-cols-8 gap-1.5 md:gap-3">
             <button 
               onClick={() => setActiveCategory('All')}
-              className={`flex flex-col items-center justify-center aspect-square rounded-2xl border transition-all ${
+              className={`flex flex-col items-center justify-center p-1.5 aspect-square rounded-xl border transition-all ${
                 activeCategory === 'All' 
                 ? 'bg-gold/10 border-gold shadow-sm' 
                 : 'bg-slate-50 dark:bg-white/5 border-transparent'
               }`}
             >
-              <span className="text-2xl mb-1">🏪</span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-navy dark:text-white/60">All</span>
+              <span className="text-xl md:text-2xl mb-0.5">🏪</span>
+              <span className="text-[7px] md:text-[9px] font-bold uppercase tracking-wider text-navy dark:text-white/60">All</span>
             </button>
             {CATEGORIES_W_ICONS.map((cat) => (
               <button 
@@ -151,14 +162,14 @@ export default function LandingPage() {
                   setActiveCategory(cat.name);
                   setPage(1);
                 }}
-                className={`flex flex-col items-center justify-center p-2 rounded-2xl border transition-all ${
+                className={`flex flex-col items-center justify-center p-1.5 aspect-square rounded-xl border transition-all ${
                   activeCategory === cat.name 
                   ? 'bg-gold/10 border-gold shadow-sm' 
                   : `${cat.bg} dark:bg-white/5 border-transparent`
                 }`}
               >
-                <span className="text-2xl mb-1">{cat.icon}</span>
-                <span className="text-[9px] font-black uppercase text-center leading-tight text-navy dark:text-white/60 truncate w-full">
+                <span className="text-xl md:text-2xl mb-0.5">{cat.icon}</span>
+                <span className="text-[7px] md:text-[9px] font-black uppercase text-center leading-tight text-navy dark:text-white/60 w-full whitespace-nowrap overflow-hidden text-ellipsis px-0.5">
                    {cat.name.split(' & ')[0]}
                 </span>
               </button>
@@ -218,64 +229,67 @@ export default function LandingPage() {
               <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">No matching items found</p>
             </div>
           )}
+
+          {filteredItems.length > displayedItems.length ? (
+            <div className="flex justify-center mt-8">
+              <button 
+                onClick={() => setPage(p => p + 1)}
+                className="px-8 py-3 bg-slate-100 dark:bg-white/5 text-navy dark:text-white rounded-2xl font-black text-xs uppercase tracking-wider hover:bg-slate-200 dark:hover:bg-white/10 transition-all shadow-sm"
+              >
+                View More
+              </button>
+            </div>
+          ) : displayedItems.length > 0 && activeCategory !== 'All' ? (
+            (() => {
+              const currentCatIndex = CATEGORIES_W_ICONS.findIndex(c => c.name === activeCategory);
+              const nextCat = currentCatIndex >= 0 && currentCatIndex < CATEGORIES_W_ICONS.length - 1 ? CATEGORIES_W_ICONS[currentCatIndex + 1] : null;
+              if (nextCat) {
+                return (
+                  <div className="flex justify-center mt-8">
+                    <button 
+                      onClick={() => {
+                        setActiveCategory(nextCat.name);
+                        setPage(1);
+                        window.scrollTo({ top: document.getElementById('items')?.offsetTop - 80, behavior: 'smooth' });
+                      }}
+                      className="px-6 py-3 bg-gold text-navy rounded-2xl font-black text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-yellow-400 transition-all shadow-lg"
+                    >
+                      Next {nextCat.name.split(' & ')[0]} <ArrowRight size={16} />
+                    </button>
+                  </div>
+                );
+              }
+              return null;
+            })()
+          ) : null}
         </section>
 
         {/* How It Works */}
-        <section id="how" className="py-20 bg-[#0f1f35] text-white text-center border-t border-white/5 my-12">
-           <h2 className="text-2xl font-black font-display uppercase tracking-tight italic mb-12">How It Works</h2>
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-6">
+        <section id="how" className="py-12 bg-[#0f1f35] text-white text-center border-t border-white/5 mt-6 mb-12">
+           <h2 className="text-xl font-black font-display uppercase tracking-tight italic mb-8">How It Works</h2>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto px-6">
              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-6 text-gold shadow-lg border border-white/10">1</div>
-                <h3 className="font-black uppercase tracking-widest mb-3 text-sm">Find Your Deal</h3>
-                <p className="text-white/50 text-xs font-medium leading-relaxed">Browse our carefully curated inventory with transparent clearance prices.</p>
+                <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-xl mb-4 text-gold shadow-lg border border-white/10">1</div>
+                <h3 className="font-black uppercase tracking-widest mb-2 text-xs">Find Your Deal</h3>
+                <p className="text-white/50 text-[10px] font-medium leading-relaxed max-w-[200px]">Browse our carefully curated inventory with transparent clearance prices.</p>
              </div>
              <div className="flex flex-col items-center relative">
-                <div className="hidden md:block absolute top-8 -left-12 w-24 h-[1px] bg-white/10"></div>
-                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-6 text-gold shadow-lg border border-white/10 relative z-10">2</div>
-                <h3 className="font-black uppercase tracking-widest mb-3 text-sm">Contact Us</h3>
-                <p className="text-white/50 text-xs font-medium leading-relaxed">Message us on WhatsApp to lock in your reservation instantly.</p>
+                <div className="hidden md:block absolute top-6 -left-12 w-24 h-[1px] bg-white/10"></div>
+                <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-xl mb-4 text-gold shadow-lg border border-white/10 relative z-10">2</div>
+                <h3 className="font-black uppercase tracking-widest mb-2 text-xs">Contact Us</h3>
+                <p className="text-white/50 text-[10px] font-medium leading-relaxed max-w-[200px]">Message us on WhatsApp to lock in your reservation instantly.</p>
              </div>
              <div className="flex flex-col items-center relative">
-                <div className="hidden md:block absolute top-8 -left-12 w-24 h-[1px] bg-white/10"></div>
-                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-6 text-gold shadow-lg border border-white/10 relative z-10">3</div>
-                <h3 className="font-black uppercase tracking-widest mb-3 text-sm">Local Pickup</h3>
-                <p className="text-white/50 text-xs font-medium leading-relaxed">Schedule a seamless and friendly pickup in Regina, Saskatchewan.</p>
+                <div className="hidden md:block absolute top-6 -left-12 w-24 h-[1px] bg-white/10"></div>
+                <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-xl mb-4 text-gold shadow-lg border border-white/10 relative z-10">3</div>
+                <h3 className="font-black uppercase tracking-widest mb-2 text-xs">Local Pickup</h3>
+                <p className="text-white/50 text-[10px] font-medium leading-relaxed max-w-[200px]">Schedule a seamless and friendly pickup in Regina, Saskatchewan.</p>
              </div>
            </div>
         </section>
       </main>
 
-      {/* Persistent Bottom Nav / Pagination (Refined Footer) */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-[#060d18]/95 border-t border-slate-200 dark:border-white/5 z-50 py-4 px-6 flex items-center justify-center">
-        <div className="max-w-md w-full flex items-center justify-between">
-          <button 
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="p-3 bg-slate-100 dark:bg-white/10 rounded-2xl text-navy dark:text-white disabled:opacity-20 transition-all hover:bg-gold hover:text-navy"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          
-          <div className="flex flex-col items-center">
-            <span className="text-[10px] font-black text-navy dark:text-white uppercase tracking-[2px]">
-              Page {page} / {totalPages || 1}
-            </span>
-            <div className="flex gap-1 mt-1">
-              {[...Array(Math.min(5, totalPages))].map((_, i) => (
-                <div key={i} className={`w-1 h-1 rounded-full ${page === i + 1 ? 'bg-gold w-3' : 'bg-slate-300 dark:bg-white/10'} transition-all`} />
-              ))}
-            </div>
-          </div>
 
-          <button 
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages || totalPages === 0}
-            className="p-3 bg-slate-100 dark:bg-white/10 rounded-2xl text-navy dark:text-white disabled:opacity-20 transition-all hover:bg-gold hover:text-navy"
-          >
-            <ChevronRight size={20} />
-          </button>
-        </div>
-      </footer>
 
       {/* Condensed Contact Section (Addressing "Contact us and the page is too long") */}
       <section id="contact" className="py-20 bg-navy px-4 text-center border-t border-white/5 mb-24">

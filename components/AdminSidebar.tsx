@@ -103,7 +103,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed, setCollapsed }) 
               D
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-xs text-white font-display tracking-tight leading-none">Deen's Hub</span>
+              <span className="font-bold text-xs text-white font-display tracking-tight leading-none">Deens Daily Hub</span>
               <span className="text-[8px] text-white/40 uppercase tracking-widest font-bold mt-0.5">Admin Panel</span>
             </div>
           </div>

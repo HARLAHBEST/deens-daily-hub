@@ -18,11 +18,11 @@ export default function PublicLayout({
       </main>
       
       {/* Compact Global Footer */}
-      <footer className="py-12 bg-[#060d18] border-t border-white/5">
-        <div className="container mx-auto px-6 text-center space-y-6">
+      <footer className="py-8 bg-[#060d18] border-t border-white/5 pb-24 md:pb-8">
+        <div className="container mx-auto px-6 text-center space-y-4">
           <div className="flex flex-col items-center gap-2">
             <div className="w-10 h-10 bg-navy-light rounded-xl flex items-center justify-center text-gold text-xl font-black font-display">D</div>
-            <span className="text-[10px] text-white/40 font-black uppercase tracking-[2px]">Deen's Hub &bull; Regina, SK</span>
+            <span className="text-[10px] text-white/40 font-black uppercase tracking-[2px]">Deens Daily Hub &bull; Regina, SK</span>
           </div>
           
           <div className="flex flex-wrap items-center justify-center gap-6 text-[9px] font-black text-white/20 uppercase tracking-[2px]">

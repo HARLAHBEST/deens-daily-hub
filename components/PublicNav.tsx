@@ -45,7 +45,7 @@ const PublicNav = () => {
               </div>
               <div className="flex flex-col">
                 <span className="font-black text-xs tracking-tight text-navy dark:text-white leading-none font-display uppercase">
-                  Deen's Hub
+                  Deens Daily Hub
                 </span>
                 <span className="text-[9px] font-bold text-slate-400 dark:text-white/40 tracking-tight">
                   Regina
