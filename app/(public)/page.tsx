@@ -250,7 +250,10 @@ export default function LandingPage() {
                       onClick={() => {
                         setActiveCategory(nextCat.name);
                         setPage(1);
-                        window.scrollTo({ top: document.getElementById('items')?.offsetTop - 80, behavior: 'smooth' });
+                        const el = document.getElementById('items');
+                        if (el) {
+                          window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+                        }
                       }}
                       className="px-6 py-3 bg-gold text-navy rounded-2xl font-black text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-yellow-400 transition-all shadow-lg"
                     >
