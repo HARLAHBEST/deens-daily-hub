@@ -28,7 +28,7 @@ const CATEGORIES_W_ICONS = [
   { name: 'Other', icon: '🎲', bg: 'bg-slate-50' }
 ];
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 6;
 
 export default function LandingPage() {
   const [items, setItems] = useState<Item[]>([]);
@@ -268,8 +268,8 @@ export default function LandingPage() {
         </section>
 
         {/* How It Works */}
-        <section id="how" className="py-12 bg-[#0f1f35] text-white text-center border-t border-white/5 mt-6 mb-12">
-           <h2 className="text-xl font-black font-display uppercase tracking-tight italic mb-8">How It Works</h2>
+        <section id="how" className="py-8 bg-[#0f1f35] text-white text-center border-t border-white/5 mt-4 mb-8">
+           <h2 className="text-xl font-black font-display uppercase tracking-tight italic mb-6">How It Works</h2>
            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto px-6">
              <div className="flex flex-col items-center">
                 <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-xl mb-4 text-gold shadow-lg border border-white/10">1</div>
@@ -295,7 +295,7 @@ export default function LandingPage() {
 
 
       {/* Condensed Contact Section (Addressing "Contact us and the page is too long") */}
-      <section id="contact" className="py-20 bg-navy px-4 text-center border-t border-white/5 mb-24">
+      <section id="contact" className="py-10 bg-navy px-4 text-center border-t border-white/5 mb-8">
          <div className="max-w-md mx-auto space-y-6">
             <div className="space-y-2">
               <h2 className="text-2xl font-black text-white font-display uppercase tracking-tight italic">Hub Contact</h2>

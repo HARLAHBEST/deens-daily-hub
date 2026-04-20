@@ -18,7 +18,7 @@ export default function PublicLayout({
       </main>
       
       {/* Compact Global Footer */}
-      <footer className="py-8 bg-[#060d18] border-t border-white/5 pb-24 md:pb-8">
+      <footer className="py-4 bg-[#060d18] border-t border-white/5 pb-16 md:pb-4">
         <div className="container mx-auto px-6 text-center space-y-4">
           <div className="flex flex-col items-center gap-2">
             <div className="w-10 h-10 bg-navy-light rounded-xl flex items-center justify-center text-gold text-xl font-black font-display">D</div>
