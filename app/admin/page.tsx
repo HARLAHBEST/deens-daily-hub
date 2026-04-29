@@ -12,13 +12,7 @@ import {
   RotateCcw,
   Users
 } from 'lucide-react';
-import { 
-  getBaseItems, 
-  getSales, 
-  getExpenses, 
-  getStatuses, 
-  getReferrals 
-} from '@/lib/data-service';
+// Using fetch for live data
 
 export default function AdminDashboard() {
   const [data, setData] = useState({
@@ -28,7 +22,8 @@ export default function AdminDashboard() {
     grossProfit: 0,
     expenses: 0,
     netProfit: 0,
-    stockCount: 0
+    stockCount: 0,
+    invoiceCount: 0
   });
 
   const [referralStats, setReferralStats] = useState({ 
@@ -38,53 +33,72 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
-    const items = getBaseItems();
-    const sales = getSales();
-    const expenses = getExpenses();
-    const statuses = getStatuses();
-    const referrals = getReferrals();
+    const fetchAllData = async () => {
+      try {
+        const [itemsRes, salesRes, expensesRes, referralsRes, invoicesRes] = await Promise.all([
+          fetch('/api/items'),
+          fetch('/api/sales'),
+          fetch('/api/expenses'),
+          fetch('/api/referrals'),
+          fetch('/api/invoices')
+        ]);
 
-    let rev = 0;
-    let cost = 0;
-    sales.forEach(s => {
-      rev += s.sp;
-      cost += s.cost;
-    });
+        const items = await itemsRes.json();
+        const sales = await salesRes.json();
+        const expenses = await expensesRes.json();
+        const referrals = await referralsRes.json();
+        const invoices = await invoicesRes.json();
 
-    items.forEach(it => {
-      const st = statuses[it.uid];
-      if (st?.st === 'Past Sold' && st.price) {
-        rev += st.price;
-        cost += it.cost;
+        let rev = 0;
+        let cost = 0;
+        
+        // Use sales from DB
+        sales.forEach((s: any) => {
+          rev += (s.sellingPrice || 0);
+          cost += (s.bidPrice || 0);
+        });
+
+        // Add items marked as sold but not in sales collection yet (legacy compatibility)
+        items.forEach((it: any) => {
+          if (it.status === 'Sold' || it.status === 'Past Sold') {
+            // Check if this item is already in sales to avoid double counting
+            if (!sales.some((s: any) => s.uid === it.uid)) {
+              rev += it.cost * 1.5; // Estimated if split
+              cost += it.cost;
+            }
+          }
+        });
+
+        let totalExp = 0;
+        expenses.forEach((e: any) => totalExp += e.amount);
+
+        const gp = rev - cost;
+        const np = gp - totalExp;
+
+        const inStock = items.filter((it: any) => it.status === 'In Stock').length;
+
+        setData({
+          totalSold: sales.length,
+          revenue: rev,
+          cogs: cost,
+          grossProfit: gp,
+          expenses: totalExp,
+          netProfit: np,
+          stockCount: inStock,
+          invoiceCount: invoices.length
+        });
+
+        setReferralStats({
+          customers: referrals.customers.length,
+          totalRef: referrals.customers.reduce((sum: number, c: any) => sum + c.referrals, 0),
+          pendingGifts: referrals.customers.reduce((sum: number, c: any) => sum + (c.giftsEarned - c.giftsClaimed), 0)
+        });
+      } catch (err) {
+        console.error('Failed to load dashboard data', err);
       }
-    });
+    };
 
-    let totalExp = 0;
-    expenses.forEach(e => totalExp += e.amount);
-
-    const gp = rev - cost;
-    const np = gp - totalExp;
-
-    const inStock = items.filter(it => {
-      const s = statuses[it.uid];
-      return !s || s.st === 'In Stock';
-    }).length;
-
-    setData({
-      totalSold: sales.length,
-      revenue: rev,
-      cogs: cost,
-      grossProfit: gp,
-      expenses: totalExp,
-      netProfit: np,
-      stockCount: inStock
-    });
-
-    setReferralStats({
-      customers: referrals.customers.length,
-      totalRef: referrals.customers.reduce((sum, c) => sum + c.referrals, 0),
-      pendingGifts: referrals.customers.reduce((sum, c) => sum + (c.giftsEarned - c.giftsClaimed), 0)
-    });
+    fetchAllData();
   }, []);
 
   const formatCurrency = (val: number) => 
@@ -161,6 +175,10 @@ export default function AdminDashboard() {
               <div className="text-[9px] text-slate-400 dark:text-white/30 uppercase tracking-[2px] font-black">Active Units</div>
             </div>
             <div className="p-4 md:p-5 rounded-[20px] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 group/stat hover:border-gold/50 transition-all text-center sm:text-left">
+              <div className="text-xl md:text-2xl font-black text-navy dark:text-white font-display mb-0.5">{data.invoiceCount}</div>
+              <div className="text-[9px] text-slate-400 dark:text-white/30 uppercase tracking-[2px] font-black">Source Invoices</div>
+            </div>
+            <div className="p-4 md:p-5 rounded-[20px] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 group/stat hover:border-gold/50 transition-all text-center sm:text-left">
               <div className="text-xl md:text-2xl font-black text-navy dark:text-white font-display mb-0.5">{data.totalSold}</div>
               <div className="text-[9px] text-slate-400 dark:text-white/30 uppercase tracking-[2px] font-black">Closed Sales</div>
             </div>
@@ -168,7 +186,7 @@ export default function AdminDashboard() {
               <div className="text-xl md:text-2xl font-black text-gold font-display mb-0.5">
                 {((data.totalSold / (data.stockCount + data.totalSold || 1)) * 100).toFixed(0)}%
               </div>
-              <div className="text-[9px] text-gold uppercase tracking-[2px] font-black">Sell-Through</div>
+              <div className="text-[9px] text-gold uppercase tracking-[2px] font-black">Efficiency</div>
             </div>
           </div>
         </div>

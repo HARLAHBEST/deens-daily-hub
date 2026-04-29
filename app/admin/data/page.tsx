@@ -11,27 +11,16 @@ export default function DataManagement() {
     setGenerating(true);
     setDownloadLink(null);
 
-    // Read everything from localStorage
-    const payload = {
-      ddh9_sales: localStorage.getItem('ddh9_sales'),
-      ddh9_status: localStorage.getItem('ddh9_status'),
-      ddh9_expenses: localStorage.getItem('ddh9_expenses'),
-    };
-
     try {
       const res = await fetch('/api/backup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+        method: 'POST'
       });
       
       const data = await res.json();
       if (res.ok && data.url) {
          setDownloadLink(data.url);
       } else {
-        alert('Failed to generate PDF: ' + (data.error || 'Unknown error'));
+        alert('Failed to generate CSV: ' + (data.error || 'Unknown error'));
       }
     } catch (e) {
       alert('Error connecting to backend.');
@@ -40,25 +29,36 @@ export default function DataManagement() {
     setGenerating(false);
   };
 
-  const exportJsonBackup = () => {
-    const backup = {
-      ddh9_sales: localStorage.getItem('ddh9_sales'),
-      ddh9_status: localStorage.getItem('ddh9_status'),
-      ddh9_expenses: localStorage.getItem('ddh9_expenses'),
-      ddh9_extra: localStorage.getItem('ddh9_extra'),
-      ddh_referrals: localStorage.getItem('ddh_referrals'),
-      ddh9_web: localStorage.getItem('ddh_web'),
-      timestamp: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `DDH_Backup_${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const exportJsonBackup = async () => {
+    try {
+      const [items, sales, exp, ref] = await Promise.all([
+        fetch('/api/items').then(r => r.json()),
+        fetch('/api/sales').then(r => r.json()),
+        fetch('/api/expenses').then(r => r.json()),
+        fetch('/api/referrals').then(r => r.json())
+      ]);
+
+      const backup = {
+        items,
+        sales,
+        expenses: exp,
+        referrals: ref,
+        timestamp: new Date().toISOString(),
+        version: "2.0-Cloud"
+      };
+      
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `DDH_Cloud_Snapshot_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert('Failed to fetch cloud data for JSON backup.');
+    }
   };
 
   return (
@@ -87,7 +87,7 @@ export default function DataManagement() {
           <div className="space-y-2">
             <h3 className="text-2xl font-black dark:text-white font-display uppercase tracking-tight">Export Financial CSV</h3>
             <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
-              Compile your MongoDB inventory and local transactions into a Cloudinary CSV ledger.
+              Compile your unified MongoDB inventory and cloud transaction records into a public CSV ledger.
             </p>
           </div>
           
@@ -111,7 +111,7 @@ export default function DataManagement() {
           <div className="space-y-2">
             <h3 className="text-2xl font-black dark:text-white font-display uppercase tracking-tight">System JSON Backup</h3>
             <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
-              Instant raw snapshot of your entire local storage persistence layer for total recovery.
+              Complete raw snapshot of your MongoDB cloud data including items, sales, and expenses for total recovery.
             </p>
           </div>
           

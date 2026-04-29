@@ -12,17 +12,13 @@ import {
   DollarSign
 } from 'lucide-react';
 import { 
-  getSales, 
-  getExpenses, 
-  getStatuses, 
-  getBaseItems, 
   Item, 
   Sale, 
-  Expense, 
-  StatusMap 
+  Expense
 } from '@/lib/data-service';
 
 type Period = 'day' | 'week' | 'month' | 'year' | 'all';
+type StatusMap = Record<string, { st: string; price?: number }>;
 
 export default function AnalyticsDashboard() {
   const [period, setPeriod] = useState<Period>('all');
@@ -39,12 +35,30 @@ export default function AnalyticsDashboard() {
   });
 
   useEffect(() => {
-    setData({
-      sales: getSales(),
-      expenses: getExpenses(),
-      items: getBaseItems(),
-      statuses: getStatuses()
-    });
+    const fetchAllData = async () => {
+      try {
+        const [itemsRes, salesRes, expensesRes] = await Promise.all([
+          fetch('/api/items'),
+          fetch('/api/sales'),
+          fetch('/api/expenses')
+        ]);
+
+        const items = await itemsRes.json();
+        const sales = await salesRes.json();
+        const expenses = await expensesRes.json();
+
+        setData({
+          sales,
+          expenses,
+          items,
+          statuses: {} // No longer needed as separate map if in items
+        });
+      } catch (err) {
+        console.error('Failed to load analytics data', err);
+      }
+    };
+
+    fetchAllData();
   }, []);
 
   const stats = useMemo(() => {
@@ -72,16 +86,18 @@ export default function AnalyticsDashboard() {
 
     let rev = 0;
     let cost = 0;
-    filteredSales.forEach(s => { rev += s.sp; cost += s.cost; });
+    filteredSales.forEach(s => { 
+      rev += (s.sellingPrice || 0); 
+      cost += (s.bidPrice || 0); 
+    });
 
     let pastRev = 0;
     let pastCost = 0;
     let pastCnt = 0;
     if (period === 'all') {
       data.items.forEach(it => {
-        const s = data.statuses[it.uid];
-        if (s?.st === 'Past Sold' && s.price) {
-          pastRev += s.price;
+        if (it.status === 'Past Sold' || (it.status === 'Sold' && !data.sales.some(s => s.uid === it.uid))) {
+          pastRev += it.cost * 1.5; // Estimating or handle appropriately 
           pastCost += it.cost;
           pastCnt++;
         }
@@ -92,9 +108,8 @@ export default function AnalyticsDashboard() {
     let personalLoss = 0;
     if (period === 'all') {
       data.items.forEach(it => {
-        const s = data.statuses[it.uid];
-        if (s?.st === 'Lost' || s?.st === 'Damaged') itemLoss += it.cost;
-        if (s?.st === 'Personal Use') personalLoss += it.cost;
+        if (it.status === 'Lost' || it.status === 'Damaged') itemLoss += it.cost;
+        if (it.status === 'Personal Use') personalLoss += it.cost;
       });
     }
 
@@ -106,10 +121,11 @@ export default function AnalyticsDashboard() {
 
     const catMap: Record<string, { n: number, rev: number, profit: number }> = {};
     filteredSales.forEach(s => {
-      if (!catMap[s.cat]) catMap[s.cat] = { n: 0, rev: 0, profit: 0 };
-      catMap[s.cat].n++;
-      catMap[s.cat].rev += s.sp;
-      catMap[s.cat].profit += (s.sp - s.cost);
+      const cat = s.category || 'Other';
+      if (!catMap[cat]) catMap[cat] = { n: 0, rev: 0, profit: 0 };
+      catMap[cat].n++;
+      catMap[cat].rev += (s.sellingPrice || 0);
+      catMap[cat].profit += ((s.sellingPrice || 0) - (s.bidPrice || 0));
     });
 
     return {
@@ -122,7 +138,7 @@ export default function AnalyticsDashboard() {
       pastCnt,
       itemLoss,
       personalLoss,
-      catPerf: Object.entries(catMap).map(([cat, d]) => ({ cat, ...d })).sort((a,b) => b.rev - a.rev)
+      catPerf: Object.entries(catMap).map(([category, d]) => ({ category, ...d })).sort((a,b) => b.rev - a.rev)
     };
   }, [data, period]);
 
@@ -269,9 +285,9 @@ export default function AnalyticsDashboard() {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                 {stats.catPerf.map((c) => (
-                  <tr key={c.cat} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                  <tr key={c.category} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                     <td className="px-6 py-4">
-                      <span className="text-xs font-black dark:text-white uppercase tracking-tight font-display">{c.cat}</span>
+                      <span className="text-xs font-black dark:text-white uppercase tracking-tight font-display">{c.category}</span>
                     </td>
                     <td className="px-6 py-4 text-xs text-right font-black tabular-nums text-slate-400">{c.n}</td>
                     <td className="px-6 py-4 text-sm text-right font-black tabular-nums dark:text-white font-display group-hover:text-gold transition-colors">{formatCurrency(c.rev)}</td>

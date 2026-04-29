@@ -3,29 +3,35 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface IItem extends Document {
   uid: string;
   lot: string;
-  inv: string;
+  invoiceId: string;
   date: string;
-  itotal: number;
-  desc: string;
-  bid: number;
+  invoiceTotal: number;
+  description: string;
+  bidPrice: number;
   cost: number;
-  cat: string;
+  category: string;
   image?: string;
   status?: string;
+  soldPrice?: number;
+  soldDate?: string;
+  platform?: string;
 }
 
 const ItemSchema: Schema = new Schema({
   uid: { type: String, required: true, unique: true },
   lot: { type: String, required: true },
-  inv: { type: String, required: true },
+  invoiceId: { type: String, required: true },
   date: { type: String, required: true },
-  itotal: { type: Number, required: true },
-  desc: { type: String, required: true },
-  bid: { type: Number, required: true },
+  invoiceTotal: { type: Number, required: true },
+  description: { type: String, required: true },
+  bidPrice: { type: Number, required: true },
   cost: { type: Number, required: true },
-  cat: { type: String, required: true },
+  category: { type: String, required: true },
   image: { type: String }, // Cloudinary Image URL
-  status: { type: String, default: 'In Stock' }
+  status: { type: String, default: 'In Stock' },
+  soldPrice: { type: Number },
+  soldDate: { type: String },
+  platform: { type: String }
 }, {
   timestamps: true,
 });
