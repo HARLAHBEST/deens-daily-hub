@@ -187,7 +187,7 @@ export default function StockTracker() {
         
         <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
           <select 
-            className="flex-1 sm:flex-none bg-slate-50 dark:bg-white/5 border-none rounded-xl text-[11px] font-black uppercase py-2.5 px-3 focus:ring-1 focus:ring-gold/30 dark:text-white cursor-pointer transition-all outline-none"
+            className="flex-1 sm:flex-none bg-slate-200 dark:bg-slate-700 border-none rounded-xl text-[11px] font-black uppercase py-2.5 px-3 focus:ring-1 focus:ring-gold/30 dark:text-white cursor-pointer transition-all outline-none"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
@@ -196,7 +196,7 @@ export default function StockTracker() {
           </select>
           
           <select 
-            className="flex-1 sm:flex-none bg-slate-50 dark:bg-white/5 border-none rounded-xl text-[11px] font-black uppercase py-2.5 px-3 focus:ring-1 focus:ring-gold/30 dark:text-white cursor-pointer transition-all outline-none"
+            className="flex-1 sm:flex-none bg-slate-200 dark:bg-slate-700 border-none rounded-xl text-[11px] font-black uppercase py-2.5 px-3 focus:ring-1 focus:ring-gold/30 dark:text-white cursor-pointer transition-all outline-none"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
