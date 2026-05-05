@@ -2,13 +2,16 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { ReferralCustomerModel, ReferralLogModel } from '@/models/Referral';
 
-export async function GET() {
+export async function GET(request: Request) {
   await dbConnect();
   try {
-    const customers = await ReferralCustomerModel.find({}).sort({ joined: -1 });
-    const log = await ReferralLogModel.find({}).sort({ date: -1 });
+    const params = new URL(request.url).searchParams;
+    const limit = Math.min(Number(params.get('limit') || 200), 2000);
+    const customers = await ReferralCustomerModel.find({}).sort({ joined: -1 }).limit(limit).lean();
+    const log = await ReferralLogModel.find({}).sort({ date: -1 }).limit(limit).lean();
     return NextResponse.json({ customers, log });
   } catch (error) {
+    console.error('GET /api/referrals error:', error);
     return NextResponse.json({ error: 'Failed to fetch referrals' }, { status: 500 });
   }
 }
@@ -34,7 +37,7 @@ export async function PATCH(request: Request) {
   try {
     const { type, id, data } = await request.json();
     if (type === 'customer') {
-      const updated = await ReferralCustomerModel.findByIdAndUpdate(id, data, { new: true });
+      const updated = await ReferralCustomerModel.findByIdAndUpdate(id, data, { returnDocument: 'after' });
       return NextResponse.json(updated);
     }
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });

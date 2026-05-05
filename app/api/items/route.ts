@@ -1,14 +1,38 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
+import mongoose from 'mongoose';
 import { ItemModel } from '@/models/Item';
 import cloudinary from '@/lib/cloudinary';
 
-export async function GET() {
+export async function GET(request: Request) {
   await dbConnect();
   try {
-    const items = await ItemModel.find({}).sort({ createdAt: -1 });
-    return NextResponse.json(items);
+    const params = new URL(request.url).searchParams;
+    const limit = Math.min(Number(params.get('limit') || 100), 500);
+    const after = params.get('after') || undefined; // cursor (ObjectId string)
+
+    const filter: any = {};
+    if (after) {
+      try {
+        filter._id = { $lt: new mongoose.Types.ObjectId(after) };
+      } catch (e) {
+        // ignore invalid cursor
+      }
+    }
+
+    // Projection: only return fields needed by frontend
+    const projection = { uid: 1, lot: 1, invoiceId: 1, date: 1, description: 1, bidPrice: 1, cost: 1, category: 1, image: 1, status: 1, soldPrice: 1, soldDate: 1, platform: 1 };
+
+    const items = await ItemModel.find(filter).sort({ _id: -1 }).limit(limit).select(projection).lean();
+
+    // next cursor (use _id string)
+    const nextCursor = items.length === limit ? String((items[items.length - 1] as any)._id) : null;
+
+    const res = NextResponse.json(items);
+    if (nextCursor) res.headers.set('X-Next-Cursor', nextCursor);
+    return res;
   } catch (error) {
+    console.error('GET /api/items error:', error);
     return NextResponse.json({ error: 'Failed to fetch items' }, { status: 500 });
   }
 }
@@ -129,7 +153,7 @@ export async function PATCH(request: Request) {
     
     if (!id) return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
     
-    const updatedItem = await ItemModel.findByIdAndUpdate(id, updates, { new: true });
+    const updatedItem = await ItemModel.findByIdAndUpdate(id, updates, { returnDocument: 'after' });
     return NextResponse.json(updatedItem);
   } catch (error: any) {
     console.error('Error updating item:', error);

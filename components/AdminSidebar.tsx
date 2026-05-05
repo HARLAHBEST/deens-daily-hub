@@ -16,7 +16,8 @@ import {
   TrendingUp,
   CreditCard,
   Menu,
-  X
+  X,
+  FileText
 } from 'lucide-react';
 
 interface SidebarItemProps {
@@ -65,6 +66,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed, setCollapsed }) 
     { href: '/admin', icon: <LayoutDashboard size={18} />, label: 'Overview' },
     { href: '/admin/stock', icon: <Package size={18} />, label: 'Stock Tracker' },
     { href: '/admin/items', icon: <Database size={18} />, label: 'Inventory DB' },
+    { href: '/admin/invoices', icon: <FileText size={18} />, label: 'Invoices' },
     { href: '/admin/sales', icon: <ShoppingBag size={18} />, label: 'Sales' },
     { href: '/admin/expenses', icon: <CreditCard size={18} />, label: 'Expenses' },
     { href: '/admin/analytics', icon: <TrendingUp size={18} />, label: 'Analytics' },

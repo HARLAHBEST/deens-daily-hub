@@ -15,6 +15,8 @@ export interface IItem extends Document {
   soldPrice?: number;
   soldDate?: string;
   platform?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const ItemSchema: Schema = new Schema({
@@ -35,5 +37,12 @@ const ItemSchema: Schema = new Schema({
 }, {
   timestamps: true,
 });
+
+// Indexes to improve read performance and support text search
+ItemSchema.index({ uid: 1 }, { unique: true });
+ItemSchema.index({ invoiceId: 1 });
+ItemSchema.index({ status: 1 });
+ItemSchema.index({ createdAt: -1 });
+ItemSchema.index({ description: 'text', category: 'text' });
 
 export const ItemModel: Model<IItem> = mongoose.models.Item || mongoose.model<IItem>('Item', ItemSchema);

@@ -2,12 +2,16 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { ExpenseModel } from '@/models/Expense';
 
-export async function GET() {
+export async function GET(request: Request) {
   await dbConnect();
   try {
-    const expenses = await ExpenseModel.find({}).sort({ date: -1 });
+    const params = new URL(request.url).searchParams;
+    const limit = Math.min(Number(params.get('limit') || 200), 1000);
+    const projection = { description: 1, amount: 1, date: 1, category: 1, paymentMethod: 1 };
+    const expenses = await ExpenseModel.find({}).sort({ date: -1 }).limit(limit).select(projection).lean();
     return NextResponse.json(expenses);
   } catch (error) {
+    console.error('GET /api/expenses error:', error);
     return NextResponse.json({ error: 'Failed to fetch expenses' }, { status: 500 });
   }
 }
@@ -27,7 +31,7 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json();
     const { id, ...updates } = body;
-    const updatedExpense = await ExpenseModel.findByIdAndUpdate(id, updates, { new: true });
+    const updatedExpense = await ExpenseModel.findByIdAndUpdate(id, updates, { returnDocument: 'after' });
     return NextResponse.json(updatedExpense);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

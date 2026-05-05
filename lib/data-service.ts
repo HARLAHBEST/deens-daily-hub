@@ -81,3 +81,24 @@ export interface ReferralData {
   customers: ReferralCustomer[];
   log: ReferralLog[];
 }
+
+export interface InvoiceItem {
+  description: string;
+  qty: number;
+  unitPrice: number;
+  lineTotal: number;
+}
+
+export interface Invoice {
+  _id?: string;
+  invoiceId: string;
+  date: string;
+  total: number;
+  itemCount: number;
+  source: string;
+  status: 'processing' | 'ready' | 'error';
+  processingStatus: string;
+  rawPdfName?: string;
+  parsedItems: InvoiceItem[];
+  errorMessage?: string;
+}

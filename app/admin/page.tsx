@@ -1,105 +1,125 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import StatsCard from '@/components/StatsCard';
-import { 
-  ShoppingBag, 
-  TrendingUp, 
-  CreditCard, 
-  DollarSign, 
+import {
+  ShoppingBag,
+  TrendingUp,
+  CreditCard,
+  DollarSign,
   Package,
   RotateCcw,
   Users
 } from 'lucide-react';
-// Using fetch for live data
 
 export default function AdminDashboard() {
-  const [data, setData] = useState({
-    totalSold: 0,
-    revenue: 0,
-    cogs: 0,
-    grossProfit: 0,
-    expenses: 0,
-    netProfit: 0,
-    stockCount: 0,
-    invoiceCount: 0
-  });
+  const [queryClient] = useState(() => new QueryClient());
+  const [search, setSearch] = useState('');
 
-  const [referralStats, setReferralStats] = useState({ 
-    customers: 0, 
-    totalRef: 0, 
-    pendingGifts: 0 
-  });
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AdminDashboardInner search={search} setSearch={setSearch} />
+    </QueryClientProvider>
+  );
+}
 
-  useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        const [itemsRes, salesRes, expensesRes, referralsRes, invoicesRes] = await Promise.all([
-          fetch('/api/items'),
-          fetch('/api/sales'),
-          fetch('/api/expenses'),
-          fetch('/api/referrals'),
-          fetch('/api/invoices')
-        ]);
+  function fetchJson(url: string) {
+    return fetch(url).then(async (res) => {
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        const err = new Error(`Request failed: ${res.status} ${res.statusText}` + (text ? ` - ${text}` : '')) as any;
+        err.status = res.status;
+        throw err;
+      }
+      return res.json();
+    });
+  }
 
-        const items = await itemsRes.json();
-        const sales = await salesRes.json();
-        const expenses = await expensesRes.json();
-        const referrals = await referralsRes.json();
-        const invoices = await invoicesRes.json();
+  function AdminDashboardInner({ search, setSearch }: { search: string; setSearch: (s: string) => void }) {
+    const { data: items = [], error: itemsError } = useQuery({
+      queryKey: ['items'],
+      queryFn: () => fetchJson('/api/items'),
+      staleTime: 1000 * 60 * 2,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    });
 
-        let rev = 0;
-        let cost = 0;
-        
-        // Use sales from DB
-        sales.forEach((s: any) => {
-          rev += (s.sellingPrice || 0);
-          cost += (s.bidPrice || 0);
-        });
+    const { data: sales = [] } = useQuery({ queryKey: ['sales'], queryFn: () => fetchJson('/api/sales'), staleTime: 1000 * 60 * 2, refetchOnWindowFocus: false, retry: 1 });
+    const { data: expenses = [] } = useQuery({ queryKey: ['expenses'], queryFn: () => fetchJson('/api/expenses'), staleTime: 1000 * 60 * 2, refetchOnWindowFocus: false, retry: 1 });
+    const { data: referrals = { customers: [] } } = useQuery({ queryKey: ['referrals'], queryFn: () => fetchJson('/api/referrals'), staleTime: 1000 * 60 * 5, refetchOnWindowFocus: false, retry: 1 });
+    const { data: invoices = [] } = useQuery({ queryKey: ['invoices'], queryFn: () => fetchJson('/api/invoices'), staleTime: 1000 * 60 * 1, refetchOnWindowFocus: false, retry: 1 });
 
-        // Add items marked as sold but not in sales collection yet (legacy compatibility)
+    const computed = useMemo(() => {
+      let rev = 0;
+      let cost = 0;
+
+      (sales || []).forEach((s: any) => {
+        rev += s.sellingPrice || 0;
+        cost += s.bidPrice || 0;
+      });
+
+      if (Array.isArray(items)) {
         items.forEach((it: any) => {
           if (it.status === 'Sold' || it.status === 'Past Sold') {
-            // Check if this item is already in sales to avoid double counting
             if (!sales.some((s: any) => s.uid === it.uid)) {
-              rev += it.cost * 1.5; // Estimated if split
+              rev += it.cost * 1.5;
               cost += it.cost;
             }
           }
         });
-
-        let totalExp = 0;
-        expenses.forEach((e: any) => totalExp += e.amount);
-
-        const gp = rev - cost;
-        const np = gp - totalExp;
-
-        const inStock = items.filter((it: any) => it.status === 'In Stock').length;
-
-        setData({
-          totalSold: sales.length,
-          revenue: rev,
-          cogs: cost,
-          grossProfit: gp,
-          expenses: totalExp,
-          netProfit: np,
-          stockCount: inStock,
-          invoiceCount: invoices.length
-        });
-
-        setReferralStats({
-          customers: referrals.customers.length,
-          totalRef: referrals.customers.reduce((sum: number, c: any) => sum + c.referrals, 0),
-          pendingGifts: referrals.customers.reduce((sum: number, c: any) => sum + (c.giftsEarned - c.giftsClaimed), 0)
-        });
-      } catch (err) {
-        console.error('Failed to load dashboard data', err);
       }
+
+      const totalExp = (expenses || []).reduce((sum: number, e: any) => sum + (e.amount || 0), 0);
+      const gp = rev - cost;
+      const np = gp - totalExp;
+      const inStock = Array.isArray(items) ? items.filter((it: any) => it.status === 'In Stock').length : 0;
+
+      return {
+        totalSold: (sales || []).length,
+        revenue: rev,
+        cogs: cost,
+        grossProfit: gp,
+        expenses: totalExp,
+        netProfit: np,
+        stockCount: inStock,
+        invoiceCount: (invoices || []).length,
+        referralStats: {
+          customers: (referrals.customers || []).length,
+          totalRef: (referrals.customers || []).reduce((sum: number, c: any) => sum + (c.referrals || 0), 0),
+          pendingGifts: (referrals.customers || []).reduce((sum: number, c: any) => sum + ((c.giftsEarned || 0) - (c.giftsClaimed || 0)), 0),
+        }
+      };
+    }, [items, sales, expenses, referrals, invoices]);
+
+    const filteredItems = useMemo(() => {
+      if (!search || !Array.isArray(items)) return items || [];
+      const q = search.toLowerCase();
+      return (items || []).filter((it: any) => {
+        return (
+          (it.description || '').toLowerCase().includes(q) ||
+          (it.uid || '').toLowerCase().includes(q) ||
+          (it.lot || '').toLowerCase().includes(q) ||
+          (it.category || '').toLowerCase().includes(q)
+        );
+      });
+    }, [search, items]);
+
+    const data = {
+      totalSold: computed.totalSold,
+      revenue: computed.revenue,
+      cogs: computed.cogs,
+      grossProfit: computed.grossProfit,
+      expenses: computed.expenses,
+      netProfit: computed.netProfit,
+      stockCount: computed.stockCount,
+      invoiceCount: computed.invoiceCount,
     };
 
-    fetchAllData();
-  }, []);
+    const referralStats = computed.referralStats;
+
+    if (itemsError) console.error('Items query error', itemsError);
 
   const formatCurrency = (val: number) => 
     new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(val);
