@@ -138,7 +138,9 @@ export default function LandingPage() {
                     {it.description}
                   </h3>
                   <div className="mt-auto flex items-center justify-between">
-                    <span className="text-xl font-black font-display text-rose-600">{formatCurrency(it.cost)}</span>
+                    <span className="text-xl font-black font-display text-rose-600">
+                      {it.bidPrice ? formatCurrency(it.bidPrice) : '**'}
+                    </span>
                     <span className="text-[10px] font-black uppercase text-slate-300">Clearance</span>
                   </div>
                 </div>
@@ -227,7 +229,9 @@ export default function LandingPage() {
                   </h3>
                   
                   <div className="mt-auto pt-5 border-t border-slate-50 dark:border-white/5 flex items-center justify-between">
-                    <span className="text-xl font-black font-display text-navy dark:text-gold tracking-tight">{formatCurrency(it.cost)}</span>
+                    <span className="text-xl font-black font-display text-navy dark:text-gold tracking-tight">
+                      {it.bidPrice ? formatCurrency(it.bidPrice) : '**'}
+                    </span>
                     <a 
                       href={`https://wa.me/14385403074?text=${encodeURIComponent(`Hi, I'm interested in Lot ${it.lot}: ${it.description}`)}`}
                       target="_blank"

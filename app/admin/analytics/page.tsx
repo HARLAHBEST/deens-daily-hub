@@ -38,8 +38,8 @@ export default function AnalyticsDashboard() {
     const fetchAllData = async () => {
       try {
         const [itemsRes, salesRes, expensesRes] = await Promise.all([
-          fetch('/api/items'),
-          fetch('/api/sales'),
+          fetch('/api/items?admin=true'),
+          fetch('/api/sales?admin=true'),
           fetch('/api/expenses')
         ]);
 

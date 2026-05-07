@@ -7,7 +7,11 @@ export async function GET(request: Request) {
   try {
     const params = new URL(request.url).searchParams;
     const limit = Math.min(Number(params.get('limit') || 200), 1000);
-    const projection = { uid: 1, date: 1, lot: 1, description: 1, category: 1, invoiceId: 1, bidPrice: 1, sellingPrice: 1, profit: 1, platform: 1 };
+    const isAdmin = params.get('admin') === 'true';
+    const projection: Record<string, number> = isAdmin
+      ? { uid: 1, date: 1, lot: 1, description: 1, category: 1, invoiceId: 1, bidPrice: 1, sellingPrice: 1, profit: 1, margin: 1, platform: 1 }
+      : { uid: 1, date: 1, lot: 1, description: 1, category: 1, sellingPrice: 1, platform: 1 };
+      
     const sales = await SaleModel.find({}).sort({ date: -1 }).limit(limit).select(projection).lean();
     return NextResponse.json(sales);
   } catch (error) {

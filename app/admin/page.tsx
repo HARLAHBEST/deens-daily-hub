@@ -40,13 +40,13 @@ export default function AdminDashboard() {
   function AdminDashboardInner({ search, setSearch }: { search: string; setSearch: (s: string) => void }) {
     const { data: items = [], error: itemsError } = useQuery({
       queryKey: ['items'],
-      queryFn: () => fetchJson('/api/items'),
+      queryFn: () => fetchJson('/api/items?admin=true'),
       staleTime: 1000 * 60 * 2,
       refetchOnWindowFocus: false,
       retry: 1,
     });
 
-    const { data: sales = [] } = useQuery({ queryKey: ['sales'], queryFn: () => fetchJson('/api/sales'), staleTime: 1000 * 60 * 2, refetchOnWindowFocus: false, retry: 1 });
+    const { data: sales = [] } = useQuery({ queryKey: ['sales'], queryFn: () => fetchJson('/api/sales?admin=true'), staleTime: 1000 * 60 * 2, refetchOnWindowFocus: false, retry: 1 });
     const { data: expenses = [] } = useQuery({ queryKey: ['expenses'], queryFn: () => fetchJson('/api/expenses'), staleTime: 1000 * 60 * 2, refetchOnWindowFocus: false, retry: 1 });
     const { data: referrals = { customers: [] } } = useQuery({ queryKey: ['referrals'], queryFn: () => fetchJson('/api/referrals'), staleTime: 1000 * 60 * 5, refetchOnWindowFocus: false, retry: 1 });
     const { data: invoices = [] } = useQuery({ queryKey: ['invoices'], queryFn: () => fetchJson('/api/invoices'), staleTime: 1000 * 60 * 1, refetchOnWindowFocus: false, retry: 1 });

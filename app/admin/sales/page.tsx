@@ -34,7 +34,7 @@ export default function SalesLedger() {
 
   const fetchSales = async () => {
     try {
-      const res = await fetch('/api/sales');
+      const res = await fetch('/api/sales?admin=true');
       if (res.ok) {
         const data = await res.json();
         setSales(data);

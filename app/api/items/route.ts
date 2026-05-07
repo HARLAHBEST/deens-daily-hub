@@ -20,8 +20,12 @@ export async function GET(request: Request) {
       }
     }
 
+    const isAdmin = params.get('admin') === 'true';
+    
     // Projection: only return fields needed by frontend
-    const projection = { uid: 1, lot: 1, invoiceId: 1, date: 1, description: 1, bidPrice: 1, cost: 1, category: 1, image: 1, status: 1, soldPrice: 1, soldDate: 1, platform: 1 };
+    const projection: Record<string, number> = isAdmin 
+      ? { uid: 1, lot: 1, invoiceId: 1, date: 1, description: 1, bidPrice: 1, cost: 1, category: 1, image: 1, status: 1, soldPrice: 1, soldDate: 1, platform: 1 }
+      : { uid: 1, lot: 1, date: 1, description: 1, bidPrice: 1, category: 1, image: 1, status: 1, platform: 1 };
 
     const items = await ItemModel.find(filter).sort({ _id: -1 }).limit(limit).select(projection).lean();
 

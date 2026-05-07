@@ -47,7 +47,7 @@ export default function StockTracker() {
   useEffect(() => {
     const fetchStock = async () => {
       try {
-        const res = await fetch('/api/items');
+        const res = await fetch('/api/items?admin=true');
         if (res.ok) {
           setItems(await res.json());
         }
@@ -127,7 +127,7 @@ export default function StockTracker() {
         }
 
         // 3. Refresh items from DB
-        const refreshRes = await fetch('/api/items');
+        const refreshRes = await fetch('/api/items?admin=true');
         setItems(await refreshRes.json());
 
         // Clear pending
@@ -148,7 +148,7 @@ export default function StockTracker() {
         body: JSON.stringify({ id: itemId, status: 'In Stock' })
       });
       if (res.ok) {
-        const refreshRes = await fetch('/api/items');
+        const refreshRes = await fetch('/api/items?admin=true');
         setItems(await refreshRes.json());
       }
     } catch (e) {
@@ -282,7 +282,11 @@ export default function StockTracker() {
                         </div>
                         <div className="flex items-center gap-1.5">
                           <span className="text-[9px] uppercase opacity-40">Cost</span>
-                          <span className="text-base text-navy dark:text-gold font-display font-black leading-none">{formatCurrency(it.cost)}</span>
+                          <span className="text-xs text-slate-400 font-mono font-bold leading-none">{formatCurrency(it.cost)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] uppercase opacity-40">Selling Price</span>
+                          <span className="text-base text-navy dark:text-gold font-display font-black leading-none">{formatCurrency(it.bidPrice)}</span>
                         </div>
                       </div>
 

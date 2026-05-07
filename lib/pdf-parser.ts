@@ -4,6 +4,7 @@ export interface ExtractedInvoiceData {
   total: number;
   itemCount: number;
   items: Array<{
+    name?: string;
     description: string;
     qty: number;
     unitPrice: number;
@@ -63,22 +64,35 @@ export async function extractInvoiceFromPDF(pdfBuffer: Buffer): Promise<Extracte
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       
-      // Look for lines that might contain item data (qty, description, price)
       const qtyMatch = line.match(/^(\d+)\s+/);
       if (qtyMatch) {
         const qty = parseInt(qtyMatch[1]);
         const remainingLine = line.substring(qtyMatch[0].length);
-        
-        // Look for price patterns at the end of the line
         const priceMatch = remainingLine.match(/(\d+\.\d{2})$/);
+        
         if (priceMatch) {
           const lineTotal = parseFloat(priceMatch[1]);
-          const description = remainingLine.substring(0, remainingLine.lastIndexOf(priceMatch[1])).trim();
-          
+          const rawDesc = remainingLine.substring(0, remainingLine.lastIndexOf(priceMatch[1])).trim();
+
+          // Split rawDesc into name and description when possible using common delimiters
+          let name: string | undefined = undefined;
+          let description = rawDesc;
+          const delimMatch = rawDesc.match(/\s[-–—:]\s/);
+          if (delimMatch) {
+            const parts = rawDesc.split(/\s[-–—:]\s/);
+            name = parts[0].trim();
+            description = parts.slice(1).join(' - ').trim();
+          } else if (rawDesc.includes(',')) {
+            const parts = rawDesc.split(',');
+            name = parts[0].trim();
+            description = parts.slice(1).join(',').trim();
+          }
+
           // Try to find unit price (lineTotal / qty)
           const unitPrice = qty > 0 ? lineTotal / qty : lineTotal;
-          
+
           items.push({
+            name,
             description,
             qty,
             unitPrice: parseFloat(unitPrice.toFixed(2)),
@@ -121,9 +135,21 @@ export async function extractInvoiceFromPDF(pdfBuffer: Buffer): Promise<Extracte
                 const priceMatch = remainingLine.match(/(\d+\.\d{2})$/);
                 if (priceMatch) {
                   const lineTotal = parseFloat(priceMatch[1]);
-                  const description = remainingLine.substring(0, remainingLine.lastIndexOf(priceMatch[1])).trim();
+                  const rawDesc = remainingLine.substring(0, remainingLine.lastIndexOf(priceMatch[1])).trim();
+                  let name: string | undefined = undefined;
+                  let description = rawDesc;
+                  const delimMatch = rawDesc.match(/\s[-–—:]\s/);
+                  if (delimMatch) {
+                    const parts = rawDesc.split(/\s[-–—:]\s/);
+                    name = parts[0].trim();
+                    description = parts.slice(1).join(' - ').trim();
+                  } else if (rawDesc.includes(',')) {
+                    const parts = rawDesc.split(',');
+                    name = parts[0].trim();
+                    description = parts.slice(1).join(',').trim();
+                  }
                   const unitPrice = qty > 0 ? lineTotal / qty : lineTotal;
-                  items.push({ description, qty, unitPrice: parseFloat(unitPrice.toFixed(2)), lineTotal });
+                  items.push({ name, description, qty, unitPrice: parseFloat(unitPrice.toFixed(2)), lineTotal });
                 }
               }
             }

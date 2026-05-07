@@ -36,7 +36,7 @@ export default function AdminItems() {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/items');
+      const res = await fetch('/api/items?admin=true');
       if (res.ok) {
         setItems(await res.json());
       }
@@ -193,8 +193,8 @@ export default function AdminItems() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 block">Bid Price ($)</label>
-                    <input required name="bidPrice" value={formData.bidPrice} onChange={handleChange} type="number" step="0.01" className="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl py-3 px-4 text-sm focus:ring-2 focus:ring-gold outline-none" placeholder="0.00" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 block">Selling Price ($)</label>
+                    <input name="bidPrice" value={formData.bidPrice} onChange={handleChange} type="number" step="0.01" className="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl py-3 px-4 text-sm focus:ring-2 focus:ring-gold outline-none" placeholder="0.00" />
                   </div>
                 </div>
 
@@ -296,9 +296,15 @@ export default function AdminItems() {
                           <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1 truncate">{it.category} &bull; {it.lot}</p>
                           <h3 className="text-sm font-black text-navy dark:text-white mb-2 truncate">{it.description}</h3>
                           <div className="mt-auto flex items-end justify-between">
-                             <div className="flex flex-col">
-                               <span className="text-[7px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">Cost Pool</span>
-                               <span className="text-lg font-black font-display text-gold">${it.cost}</span>
+                             <div className="flex flex-col gap-1">
+                               <div className="flex flex-col">
+                                 <span className="text-[7px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">Cost Price</span>
+                                 <span className="text-sm font-black font-display text-slate-400">${it.cost}</span>
+                               </div>
+                               <div className="flex flex-col">
+                                 <span className="text-[7px] font-black uppercase text-gold tracking-widest leading-none mb-1">Selling Price</span>
+                                 <span className="text-xl font-black font-display text-gold">${it.bidPrice}</span>
+                               </div>
                              </div>
                              <div className="flex items-center gap-1">
                                <button onClick={() => startEdit(it)} className="p-2 text-slate-400 hover:text-gold hover:bg-gold/10 rounded-xl transition-all">

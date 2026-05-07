@@ -30,13 +30,14 @@ async function processInvoiceBackground(invoiceId: string, pdfBuffer: Buffer) {
       if (Array.isArray(parsed.items) && parsed.items.length > 0) {
         const createOps = parsed.items.map((it: any, idx: number) => {
           const uid = `${invoiceId}-${idx}-${Date.now().toString(36)}`;
+          const itemDesc = it.name ? `${it.name}${it.description ? ' - ' + it.description : ''}` : (it.description || 'Item');
           return {
             uid,
             lot: invoiceId,
             invoiceId,
             date: parsed.date,
             invoiceTotal: parsed.total || 0,
-            description: it.description || 'Item',
+            description: itemDesc,
             bidPrice: it.unitPrice || 0,
             cost: it.unitPrice || 0,
             category: 'Other',
@@ -88,6 +89,7 @@ export async function GET(request: Request) {
 
 export async function POST(req: Request) {
   try {
+    await dbConnect();
     const formData = await req.formData();
     const pdfFile = formData.get('pdfFile');
     const invoiceIdEntry = formData.get('invoiceId');
