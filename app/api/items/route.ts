@@ -12,6 +12,15 @@ export async function GET(request: Request) {
     const after = params.get('after') || undefined; // cursor (ObjectId string)
 
     const filter: any = {};
+    const search = params.get('search');
+    if (search) {
+      filter.$or = [
+        { description: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } },
+        { invoiceId: { $regex: search, $options: 'i' } }
+      ];
+    }
+
     if (after) {
       try {
         filter._id = { $lt: new mongoose.Types.ObjectId(after) };
@@ -57,9 +66,12 @@ export async function POST(request: Request) {
     const soldDate = formData.get('soldDate') as string || undefined;
     const platform = formData.get('platform') as string || undefined;
     
+    const quantity = Number(formData.get('quantity')) || 1;
+    const unit = formData.get('unit') as string || 'pcs';
+    
     let uid = formData.get('uid') as string;
     if (!uid) {
-      uid = `${invoiceId}|${lot}`;
+      uid = `${invoiceId}|${lot}|${Date.now().toString(36)}`;
     }
     const date = new Date().toISOString().split('T')[0];
     
@@ -98,7 +110,9 @@ export async function POST(request: Request) {
       status,
       soldPrice,
       soldDate,
-      platform
+      platform,
+      quantity,
+      unit
     });
 
     return NextResponse.json(newItem);
@@ -120,7 +134,7 @@ export async function PATCH(request: Request) {
       id = formData.get('id') as string;
       
       // Map fields
-      const fields = ['invoiceId', 'description', 'category', 'status', 'lot', 'bidPrice', 'invoiceTotal', 'cost', 'soldPrice', 'soldDate', 'platform'];
+      const fields = ['invoiceId', 'description', 'category', 'status', 'lot', 'bidPrice', 'invoiceTotal', 'cost', 'soldPrice', 'soldDate', 'platform', 'quantity', 'unit'];
       fields.forEach(f => {
         const val = formData.get(f);
         if (val !== null) {

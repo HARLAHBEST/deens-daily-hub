@@ -28,33 +28,44 @@ async function processInvoiceBackground(invoiceId: string, pdfBuffer: Buffer) {
     // Create inventory items from parsed invoice lines if any
     try {
       if (Array.isArray(parsed.items) && parsed.items.length > 0) {
-        const createOps = parsed.items.map((it: any, idx: number) => {
-          const uid = `${invoiceId}-${idx}-${Date.now().toString(36)}`;
-          const itemDesc = it.name ? `${it.name}${it.description ? ' - ' + it.description : ''}` : (it.description || 'Item');
-          return {
-            uid,
-            lot: invoiceId,
-            invoiceId,
-            date: parsed.date,
-            invoiceTotal: parsed.total || 0,
-            description: itemDesc,
-            bidPrice: it.unitPrice || 0,
-            cost: it.unitPrice || 0,
-            category: 'Other',
-            image: undefined,
-            status: 'In Stock',
-            platform: undefined,
-          };
-        });
+        for (let idx = 0; idx < parsed.items.length; idx++) {
+          const it = parsed.items[idx];
+          const itemDesc = it.name || it.description || 'Item';
+          
+          // Check if item already exists in this invoice lot
+          const existing = await ItemModel.findOne({ 
+            invoiceId, 
+            description: itemDesc 
+          });
 
-        // Insert many but ignore duplicates/errors per-item
-        await ItemModel.insertMany(createOps, { ordered: false }).catch((e) => {
-          // Log but don't fail the invoice processing because of item insert errors
-          console.error('Failed to insert some invoice items to inventory:', e && e.message ? e.message : e);
-        });
+          if (existing) {
+            // Update existing record (maybe quantity or price changed)
+            existing.quantity = (existing.quantity || 1) + it.qty;
+            existing.cost = it.unitPrice || existing.cost;
+            existing.bidPrice = it.unitPrice || existing.bidPrice;
+            await existing.save();
+          } else {
+            // Create new record
+            const uid = `${invoiceId}-${idx}-${Date.now().toString(36)}`;
+            await ItemModel.create({
+              uid,
+              lot: invoiceId,
+              invoiceId,
+              date: parsed.date,
+              invoiceTotal: parsed.total || 0,
+              description: itemDesc,
+              bidPrice: it.unitPrice || 0,
+              cost: it.unitPrice || 0,
+              category: 'Other',
+              status: 'In Stock',
+              quantity: it.qty || 1,
+              unit: 'pcs'
+            });
+          }
+        }
       }
     } catch (e) {
-      console.error('Error creating inventory items from invoice:', e);
+      console.error('Error syncing inventory from invoice:', e);
     }
   } catch (error) {
     console.error(`Invoice background processing failed for ${invoiceId}:`, error);

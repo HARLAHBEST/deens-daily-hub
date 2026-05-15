@@ -15,6 +15,8 @@ export interface IItem extends Document {
   soldPrice?: number;
   soldDate?: string;
   platform?: string;
+  quantity: number;
+  unit?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -33,7 +35,9 @@ const ItemSchema: Schema = new Schema({
   status: { type: String, default: 'In Stock' },
   soldPrice: { type: Number },
   soldDate: { type: String },
-  platform: { type: String }
+  platform: { type: String },
+  quantity: { type: Number, default: 1 },
+  unit: { type: String, default: 'pcs' }
 }, {
   timestamps: true,
 });

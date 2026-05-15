@@ -32,8 +32,8 @@ const PublicNav = () => {
       <header 
         className={`sticky top-0 z-[100] transition-all duration-300 ${
           isScrolled 
-            ? 'bg-white/95 dark:bg-[#060d18]/95 backdrop-blur-md border-b border-white/10 shadow-lg py-2' 
-            : 'bg-white dark:bg-[#060d18] border-b border-white/5 py-3'
+            ? 'bg-[#060d18]/95 backdrop-blur-md border-b border-white/10 shadow-lg py-2' 
+            : 'bg-[#060d18] border-b border-white/5 py-3'
         }`}
       >
         <div className="container mx-auto px-6">
@@ -44,10 +44,10 @@ const PublicNav = () => {
                 D
               </div>
               <div className="flex flex-col">
-                <span className="font-black text-xs tracking-tight text-navy dark:text-white leading-none font-display uppercase">
+                <span className="font-black text-xs tracking-tight text-white leading-none font-display uppercase">
                   Deens Daily Hub
                 </span>
-                <span className="text-[9px] font-bold text-slate-400 dark:text-white/40 tracking-tight">
+                <span className="text-[9px] font-bold text-white/40 tracking-tight">
                   Regina
                 </span>
               </div>
@@ -55,19 +55,18 @@ const PublicNav = () => {
 
             {/* Desktop Search */}
             <div className="hidden md:flex flex-1 max-w-md relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-gold transition-colors" size={16} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={16} />
               <input 
                 type="text" 
                 placeholder="Search boots, appliances, electronics..."
-                className="w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold transition-all"
+                className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-full text-sm text-white focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold transition-all placeholder:text-white/20"
               />
             </div>
 
             {/* Desktop Links */}
             <nav className="hidden lg:flex items-center gap-6 shrink-0 ml-4">
-              <Link href="/#categories" className="text-[11px] font-black uppercase text-slate-500 hover:text-gold dark:text-white/60 dark:hover:text-gold transition-colors tracking-[2px]">Categories</Link>
-              <Link href="/#items" className="text-[11px] font-black uppercase text-slate-500 hover:text-gold dark:text-white/60 dark:hover:text-gold transition-colors tracking-[2px]">Inventory</Link>
-              <Link href="/#how" className="text-[11px] font-black uppercase text-slate-500 hover:text-gold dark:text-white/60 dark:hover:text-gold transition-colors tracking-[2px]">How it Works</Link>
+              <Link href="/#categories" className="text-[11px] font-black uppercase text-white/60 hover:text-gold transition-colors tracking-[2px]">Categories</Link>
+              <Link href="/#items" className="text-[11px] font-black uppercase text-white/60 hover:text-gold transition-colors tracking-[2px]">Inventory</Link>
             </nav>
 
             {/* Actions */}
@@ -113,7 +112,6 @@ const PublicNav = () => {
             <div className="flex flex-col gap-4 pt-4 border-t border-slate-100 dark:border-white/5">
               <Link href="/#categories" onClick={() => setIsMenuOpen(false)} className="text-xl font-black font-display text-navy dark:text-white uppercase tracking-tight">Browse Categories</Link>
               <Link href="/#items" onClick={() => setIsMenuOpen(false)} className="text-xl font-black font-display text-navy dark:text-white uppercase tracking-tight">All Inventory</Link>
-              <Link href="/#how" onClick={() => setIsMenuOpen(false)} className="text-xl font-black font-display text-navy dark:text-white uppercase tracking-tight">How it Works</Link>
             </div>
           </nav>
         </div>

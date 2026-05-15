@@ -83,6 +83,7 @@ export interface ReferralData {
 }
 
 export interface InvoiceItem {
+  name?: string;
   description: string;
   qty: number;
   unitPrice: number;

@@ -33,20 +33,26 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ href, icon, label, collapsed,
   <Link 
     href={href}
     onClick={onClick}
-    className={`flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group ${
+    className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group relative overflow-hidden ${
       active 
-        ? 'bg-gold text-navy shadow-lg shadow-gold/20' 
-        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-navy dark:hover:text-gold'
+        ? 'bg-gradient-to-r from-gold to-gold/80 text-navy shadow-[0_8px_20px_-5px_rgba(240,165,0,0.4)]' 
+        : 'text-slate-600 dark:text-slate-400 hover:bg-white/5 hover:text-gold'
     }`}
   >
-    <div className={`transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
+    {active && (
+      <div className="absolute inset-0 bg-white/20 animate-pulse mix-blend-overlay"></div>
+    )}
+    <div className={`transition-all duration-300 ${active ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110 group-hover:rotate-6'}`}>
       {icon}
     </div>
-    <span className={`font-bold whitespace-nowrap overflow-hidden text-[10px] uppercase tracking-wider transition-all duration-300 ${
+    <span className={`font-black whitespace-nowrap overflow-hidden text-[10px] uppercase tracking-[2px] transition-all duration-500 ${
       collapsed ? 'md:w-0 md:opacity-0' : 'w-auto opacity-100'
     }`}>
       {label}
     </span>
+    {active && !collapsed && (
+      <div className="ml-auto w-1.5 h-1.5 bg-navy rounded-full"></div>
+    )}
   </Link>
 );
 
